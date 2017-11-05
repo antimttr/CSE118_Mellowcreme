@@ -80,6 +80,7 @@ public class CameraFragment extends Fragment
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -87,6 +88,11 @@ public class CameraFragment extends Fragment
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+
+    /**
+     * Context object for grabbing contexts from ExtraSensory
+     */
+    private static VisTextContexts contexts;
 
     /**
      * Tag for the {@link Log}.
@@ -421,6 +427,8 @@ public class CameraFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        VisTextApp visTextApp = (VisTextApp) getActivity().getApplication();
+        contexts = visTextApp.getContexts();
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
@@ -461,10 +469,13 @@ public class CameraFragment extends Fragment
     }
 
     private void requestCameraPermission() {
-        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+                || shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
             new ConfirmationDialog().show(getChildFragmentManager(), FRAGMENT_DIALOG);
         } else {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
         }
     }
 
@@ -488,7 +499,7 @@ public class CameraFragment extends Fragment
      * @param height The height of available size for camera preview
      */
     @SuppressWarnings("SuspiciousNameCombination")
-    private void setUpCameraOutputs(int width, int height) {
+    private void setUpCameraOutputs(int width, int height) throws java.lang.NullPointerException {
         Activity activity = getActivity();
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -599,7 +610,7 @@ public class CameraFragment extends Fragment
     /**
      * Opens the camera specified by {@link CameraFragment#mCameraId}.
      */
-    private void openCamera(int width, int height) {
+    private void openCamera(int width, int height) throws java.lang.NullPointerException {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission();
@@ -898,6 +909,11 @@ public class CameraFragment extends Fragment
                     //        .setMessage(R.string.intro_message)
                     //        .setPositiveButton(android.R.string.ok, null)
                     //        .show();
+                    try { contexts.checkTags(getActivity()); }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        return;
+                    }
                 }
                 break;
             }
@@ -1017,6 +1033,8 @@ public class CameraFragment extends Fragment
                         public void onClick(DialogInterface dialog, int which) {
                             parent.requestPermissions(new String[]{Manifest.permission.CAMERA},
                                     REQUEST_CAMERA_PERMISSION);
+                            parent.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
                         }
                     })
                     .setNegativeButton(android.R.string.cancel,
