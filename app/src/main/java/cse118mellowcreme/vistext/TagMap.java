@@ -10,7 +10,7 @@ public class TagMap {
 
     private HashMap<String, String> tagMap = new HashMap<String, String>();
 
-    public void BuildMap() {
+    public void buildMap() {
         tagMap.put("Lying down", "resting");
         tagMap.put("Sitting", "sitting");
         tagMap.put("Standing", "standing");
@@ -62,11 +62,11 @@ public class TagMap {
         tagMap.put("With friends", "friends");
     }
 
-    public String GetTag(String label) {
+    public String getTag(String label) {
         return tagMap.get(label);
     }
 
-    public void PutTag(String label, String tag) {
+    public void putTag(String label, String tag) {
         tagMap.put(label, tag);
     }
 
