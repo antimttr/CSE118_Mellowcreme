@@ -13,21 +13,15 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<<<<<<< HEAD
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout"
-=======
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
->>>>>>> cba402fe25e8af6e5e5f64c4316114ef44964df3
+    android:id="@+id/camera"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <cse118mellowcreme.vistext.AutoFitTextureView
         android:id="@+id/texture"
-<<<<<<< HEAD
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_above="@+id/camera"
@@ -79,33 +73,3 @@
         app:srcCompat="@android:color/darker_gray" />
 
 </android.support.constraint.ConstraintLayout>
-=======
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="bottom|center_horizontal"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/picture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/picture"
-            tools:layout_marginRight="50dp" />
-
-        <Button
-            android:id="@+id/gallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/control"
-            android:text="@string/gallery" />
-    </LinearLayout>
-
-</RelativeLayout>
->>>>>>> cba402fe25e8af6e5e5f64c4316114ef44964df3
