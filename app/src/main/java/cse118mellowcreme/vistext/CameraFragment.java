@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
@@ -59,7 +60,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -455,14 +455,16 @@ public class CameraFragment extends Fragment
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        view.findViewById(R.id.picture).setOnClickListener(this);
-        view.findViewById(R.id.gallery).setOnClickListener(this);
+        view.findViewById(R.id.takePicture).setOnClickListener(this);
+        view.findViewById(R.id.galleryButton).setOnClickListener(this);
+        view.findViewById(R.id.lastPictureTaken).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         try {
             mFile = createImageFile();
         } catch(IOException e) {
@@ -920,18 +922,20 @@ public class CameraFragment extends Fragment
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.picture: {
+            case R.id.takePicture: {
                 takePicture();
                 break;
             }
-            case R.id.gallery: {
-                Activity activity = getActivity();
-                if (null != activity) {
-                    //new AlertDialog.Builder(activity)
-                    //        .setMessage(R.string.intro_message)
-                    //        .setPositiveButton(android.R.string.ok, null)
-                    //        .show();
-                }
+            case R.id.galleryButton: {
+                Intent intent = new Intent(this.getActivity(), GalleryActivity.class);
+                //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                startActivity(intent);
+                break;
+            }
+            case R.id.lastPictureTaken: {
+                Intent intent = new Intent(this.getActivity(), ViewActivity.class);
+                //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                startActivity(intent);
                 break;
             }
         }
