@@ -5,7 +5,9 @@ import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.util.Pair;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -27,7 +29,7 @@ import java.util.Vector;
 public class VisTextContexts {
 
     private Vector<String> tagList;
-    private JSONObject rawPredictions;
+    private ArrayList<Pair<String, Double>> rawPredictions;
 
     private final String UUID_DIR_PREFIX = "extrasensory.labels.";
     private final String SERVER_PREDICTIONS_FILE_SUFFIX = ".server_predictions.json";
@@ -37,9 +39,19 @@ public class VisTextContexts {
         tagList = new Vector<>();
     }
 
-    public String getTags() {return "";}
+    /**
+     *
+     * @return
+     */
+    public Vector<String> getTags() {return (Vector<String>)tagList.clone();}
 
-
+    /**
+     * Checks ES data directory for new ES file, updates context tag list with latest contexts.
+     * Should be called every 60 seconds.
+     * @param currentActivity
+     * @throws PackageManager.NameNotFoundException
+     * @throws java.lang.NullPointerException
+     */
     public void checkTags(FragmentActivity currentActivity)  throws PackageManager.NameNotFoundException, java.lang.NullPointerException {
        //List<String> users  = getUsers(currentActivity);
        //Log.e("Check data", users.toString());
@@ -111,6 +123,32 @@ public class VisTextContexts {
             e.printStackTrace();
         }
 
+        rawPredictions = new ArrayList<>();
+
+        try {
+            JSONObject jObj = new JSONObject(text.toString());
+            JSONArray jLabels = jObj.getJSONArray("label_names");
+            for (int i=0; i < jLabels.length(); i++) {
+                JSONObject obj = jLabels.getJSONObject(i);
+                rawPredictions.add(Pair.create(obj.toString(), 0.0d));
+            }
+            JSONArray jProbs = jObj.getJSONArray("label_probs");
+            for (int i=0; i < jProbs.length(); i++) {
+                JSONObject obj = jProbs.getJSONObject(i);
+                rawPredictions.set(i, Pair.create(rawPredictions.get(i).first, Double.valueOf(obj.toString())));
+            }
+
+            tagList = new Vector<>();
+            for(Pair<String, Double> prediction : rawPredictions) {
+                if(prediction.second > 0.5f) {
+                    //todo: change to mapping function
+                    tagList.add(prediction.first);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
 
