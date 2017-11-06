@@ -376,8 +376,13 @@ public class CameraFragment extends Fragment
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        String imageFileName = "IMG_" + timeStamp;
+        File storageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + "VisText");
+
+        if (!storageDir.exists()) {
+            storageDir.mkdirs();
+        }
+
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
