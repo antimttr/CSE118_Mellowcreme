@@ -146,6 +146,8 @@ public class VisTextContexts {
                 }
             }
 
+            Log.e("Check data", tagList.toString());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
