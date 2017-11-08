@@ -40,6 +40,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
@@ -60,6 +61,10 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -71,11 +76,21 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Vector;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class CameraFragment extends Fragment
         implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+
+    /**
+     * Timer task objects for running the Extra Sensory data collection routine.
+     */
+    private Timer esDataTimer;
+    private TimerTask  esDataTimerTask;
+    private Handler esDataTimerHandler = new Handler();
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -201,6 +216,7 @@ public class CameraFragment extends Fragment
             mCameraOpenCloseLock.release();
             mCameraDevice = cameraDevice;
             createCameraPreviewSession();
+            startTimer();
         }
 
         @Override
@@ -208,6 +224,7 @@ public class CameraFragment extends Fragment
             mCameraOpenCloseLock.release();
             cameraDevice.close();
             mCameraDevice = null;
+            stopTimer();
         }
 
         @Override
@@ -361,6 +378,41 @@ public class CameraFragment extends Fragment
         }
 
     };
+
+    /**
+     * Stops the ES data collection timer
+     */
+    private void stopTimer() {
+        if(esDataTimer != null) {
+            esDataTimer.cancel();
+            esDataTimer.purge();
+        }
+
+    }
+
+    /**
+     * Starts the ES data collection timer
+     */
+    private void startTimer() {
+        esDataTimer = new Timer();
+        esDataTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                esDataTimerHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        VisTextApp app = (VisTextApp)getActivity().getApplication();
+                        try { app.getContexts().checkTags(getActivity()); }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        };
+        esDataTimer.schedule(esDataTimerTask, 1, 60000);
+    }
+
 
     /**
      * Shows a {@link Toast} on the UI thread.
@@ -883,6 +935,17 @@ public class CameraFragment extends Fragment
                     showToast("Saved: " + mFile);
                     Log.d(TAG, mFile.toString());
                     unlockFocus();
+                    try {
+                        ExifInterface exif = new ExifInterface(mFile.getAbsolutePath());
+                        VisTextApp app = (VisTextApp)getActivity().getApplication();
+                        Vector<String> currentTags = app.getContexts().getTags();
+                        JSONArray json = new JSONArray(currentTags);
+                        exif.setAttribute(ExifInterface.TAG_USER_COMMENT, json.toString());
+                        exif.saveAttributes();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             };
 
@@ -943,9 +1006,14 @@ public class CameraFragment extends Fragment
                 break;
             }
             case R.id.lastPictureTaken: {
-                Intent intent = new Intent(this.getActivity(), ViewActivity.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-                startActivity(intent);
+                //Intent intent = new Intent(this.getActivity(), ViewActivity.class);
+                 //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                //startActivity(intent);
+                try { contexts.checkTags(getActivity()); }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
                 break;
             }
         }

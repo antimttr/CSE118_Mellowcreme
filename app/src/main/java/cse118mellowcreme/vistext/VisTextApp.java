@@ -10,11 +10,13 @@ import android.app.Application;
 public class VisTextApp extends Application {
     private static VisTextApp singleton;
     private static VisTextContexts contexts;
+    private static TagMap tagMap;
 
     public static VisTextApp getInstance() {
         return singleton;
     }
 
+    public TagMap getTagMaps() { return tagMap; }
     public VisTextContexts getContexts() { return contexts; }
 
     @Override
@@ -22,5 +24,7 @@ public class VisTextApp extends Application {
         super.onCreate();
         singleton = this;
         contexts = new VisTextContexts();
+        tagMap = new TagMap();
+        tagMap.buildMap();
     }
 }

@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -105,7 +106,7 @@ public class VisTextContexts {
         List<String> userTimestamps = new ArrayList<>(userTimestampsSet);
 
         String timestamp = userTimestamps.get(userTimestamps.size() - 1);
-
+        Log.i("Latest Tag Timestamp", timestamp);
         File minuteLabelsFile = new File(esaFilesDir,timestamp + SERVER_PREDICTIONS_FILE_SUFFIX);
 
         // Read the file:
@@ -118,7 +119,7 @@ public class VisTextContexts {
                 text.append('\n');
             }
             bufferedReader.close();
-            Log.e("Check Tags", text.toString());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -126,28 +127,26 @@ public class VisTextContexts {
         rawPredictions = new ArrayList<>();
 
         try {
-            JSONObject jObj = new JSONObject(text.toString());
+            JSONObject jObj = new JSONObject( URLDecoder.decode( text.toString(), "UTF-8" ));
             JSONArray jLabels = jObj.getJSONArray("label_names");
             for (int i=0; i < jLabels.length(); i++) {
-                JSONObject obj = jLabels.getJSONObject(i);
-                rawPredictions.add(Pair.create(obj.toString(), 0.0d));
+                String obj =  (String)jLabels.get(i);
+                rawPredictions.add(Pair.create(obj, 0.0d));
             }
             JSONArray jProbs = jObj.getJSONArray("label_probs");
             for (int i=0; i < jProbs.length(); i++) {
-                JSONObject obj = jProbs.getJSONObject(i);
-                rawPredictions.set(i, Pair.create(rawPredictions.get(i).first, Double.valueOf(obj.toString())));
+                Double obj = (Double)jProbs.get(i);
+                rawPredictions.set(i, Pair.create(rawPredictions.get(i).first, obj));
             }
 
             tagList = new Vector<>();
             for(Pair<String, Double> prediction : rawPredictions) {
                 if(prediction.second > 0.5f) {
-                    //todo: change to mapping function
-                    tagList.add(prediction.first);
+                    VisTextApp app = (VisTextApp)currentActivity.getApplication();
+                    tagList.add(app.getTagMaps().getTag(prediction.first));
                 }
             }
-
-            Log.e("Check data", tagList.toString());
-
+            Log.i("Last Tag Data Read", tagList.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
