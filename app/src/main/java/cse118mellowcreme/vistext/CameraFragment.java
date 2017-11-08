@@ -1006,15 +1006,9 @@ public class CameraFragment extends Fragment
                 break;
             }
             case R.id.lastPictureTaken: {
-                //Intent intent = new Intent(this.getActivity(), ViewActivity.class);
+                Intent intent = new Intent(this.getActivity(), ViewActivity.class);
                  //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-                //startActivity(intent);
-                try { contexts.checkTags(getActivity()); }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    return;
-                }
-                break;
+                startActivity(intent);
             }
         }
     }
