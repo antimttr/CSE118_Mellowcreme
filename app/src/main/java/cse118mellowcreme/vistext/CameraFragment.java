@@ -251,6 +251,11 @@ public class CameraFragment extends Fragment
 
         @Override
         public void onImageAvailable(ImageReader reader) {
+            try {
+                mFile = createImageFile();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
             mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
         }
 
@@ -463,11 +468,6 @@ public class CameraFragment extends Fragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        try {
-            mFile = createImageFile();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
