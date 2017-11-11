@@ -274,6 +274,11 @@ public class CameraFragment extends Fragment
 
         @Override
         public void onImageAvailable(ImageReader reader) {
+            try {
+                mFile = createImageFile();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
             mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
         }
 
