@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gridView2"
+        app:layout_constraintTop_toBottomOf="@+id/img"
         app:srcCompat="@drawable/ic_launcher" />
 
     <EditText
@@ -31,6 +31,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/img"
+        android:adjustViewBounds="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/imageButton3"
+        app:layout_constraintTop_toBottomOf="@id/spinner"/>
+    <TextView
+        android:id="@+id/title"
+        android:layout_gravity="center"
+        android:textColor="#000"
+        android:textStyle="bold"
+        android:text="testingtesting"
+        app:layout_constraintTop_toBottomOf="@id/img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+<!--
     <GridView
         android:id="@+id/gridView2"
         android:layout_width="0dp"
@@ -44,7 +62,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner" />
-
+-->
     <TextView
         android:id="@+id/textView2"
         android:layout_width="0dp"
@@ -76,7 +94,7 @@
         android:layout_marginBottom="1dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/gridView2"
+        app:layout_constraintBottom_toTopOf="@+id/img"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
