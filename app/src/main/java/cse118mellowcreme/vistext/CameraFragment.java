@@ -60,6 +60,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -537,19 +538,28 @@ public class CameraFragment extends Fragment
     }
 
     @Override
-    public void onResume() {
+    public void onResume() throws java.lang.RuntimeException{
         super.onResume();
         startBackgroundThread();
-
+        hideSoftKeyboard();
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
         // a camera and start preview from here (otherwise, we wait until the surface is ready in
         // the SurfaceTextureListener).
         if (mTextureView.isAvailable()) {
-            openCamera(mTextureView.getWidth(), mTextureView.getHeight());
+            try {
+                openCamera(mTextureView.getWidth(), mTextureView.getHeight());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
         }
+    }
+
+    private void hideSoftKeyboard () {
+        InputMethodManager imm = (InputMethodManager) this.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(this.getView().getWindowToken(), 0);
     }
 
     @Override
@@ -1012,11 +1022,32 @@ public class CameraFragment extends Fragment
             }
             case R.id.lastPictureTaken: {
                 Intent intent = new Intent(this.getActivity(), ViewActivity.class);
+                intent.putExtra("file", getLatestImage());
                  //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                 startActivity(intent);
             }
         }
     }
+
+    /**
+     *
+     * @return The string path of the latest image in the VisText image directory.
+     */
+    private String getLatestImage() {
+        String result = "";
+        try {
+            File parentDir = new File(mFile.getParent());
+            File[] images = parentDir.listFiles();
+            File newestImage = images[0];
+            result = newestImage.toString();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
 
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
         if (mFlashSupported) {
