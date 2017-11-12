@@ -530,11 +530,11 @@ public class CameraFragment extends Fragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        try {
+        /*try {
             mFile = createImageFile();
         } catch(IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
@@ -1039,6 +1039,10 @@ public class CameraFragment extends Fragment
             File parentDir = new File(mFile.getParent());
             File[] images = parentDir.listFiles();
             File newestImage = images[0];
+            for(File image : images) {
+                if(newestImage.lastModified() < image.lastModified())
+                    newestImage = image;
+            }
             result = newestImage.toString();
 
         } catch (Exception e) {
