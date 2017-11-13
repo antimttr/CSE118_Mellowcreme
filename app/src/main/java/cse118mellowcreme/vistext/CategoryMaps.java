@@ -1,5 +1,7 @@
 package cse118mellowcreme.vistext;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,14 +80,18 @@ public class CategoryMaps {
         return null;
     }
 
-    public boolean isInCategory(String categoryStr, List<String> labels) {
+    public boolean isInCategory(String categoryStr, JSONArray labels) {
 
         List<String> category = convertStringToCategory(categoryStr);
 
         if (category != null) {
-            for (int i = 0; i < labels.size(); i++) {
-                if (category.contains((labels.get(i)))) {
-                    return true;
+            for (int i = 0; i < labels.length(); i++) {
+                try {
+                    if (category.contains((labels.get(i)))) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }

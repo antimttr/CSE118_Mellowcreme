@@ -1,35 +1,45 @@
 package cse118mellowcreme.vistext;
 
 import android.content.Intent;
+import android.media.ExifInterface;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.security.AccessController.getContext;
 
 public class GalleryInnerActivity extends AppCompatActivity {
 
     private String category;
     private CategoryMaps categoryMap;
 
-    private List<String> getPicturesWithContext() {
-        //navigate through all the pictures in the gallery
-        List<Object> allPictures = new ArrayList<>(); //contains all the picture objects?
-        List<String> pictureLabels = new ArrayList<String>(); //contains the context of a picture
-        List<String> galleryPictures = new ArrayList<String>();
-        if (categoryMap != null) {
-            for (int i = 0; i < allPictures.size(); i++) {
-                //get the picture labels from the picture
-                //pictureLabels = allPictures.getLabels();
-                if (categoryMap.isInCategory(category, pictureLabels)) {
-                    galleryPictures.add(""); //add the picture
+    //navigate through all the pictures in the directory and find the ones with the correct category tags
+    private List<File> getPicturesWithContext() {
+        File storage = new File(GalleryInnerActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + "VisText");
+        File[] allPictures = storage.listFiles();
+        List<File> galleryPictures = new ArrayList<File>();
+
+        for(File image : allPictures) {
+            try {
+                ExifInterface exif = new ExifInterface(image.getAbsolutePath());
+                JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
+                if (categoryMap.isInCategory(category, json)) {
+                    galleryPictures.add(image);
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
         }
         //add the picture or something to a list to show in the gallery
-        return null;
+        return galleryPictures;
     }
 
 
@@ -45,8 +55,10 @@ public class GalleryInnerActivity extends AppCompatActivity {
         categoryMap = new CategoryMaps();
         categoryMap.buildCategories();
 
-        List<String> pictures = new ArrayList<String>(); //pictures that will be visible in the gallery
+        List<File> pictures = new ArrayList<File>(); //pictures that will be visible in the gallery
         pictures = getPicturesWithContext();
+
+        //set the picture files in the gallery
 
     }
 }
