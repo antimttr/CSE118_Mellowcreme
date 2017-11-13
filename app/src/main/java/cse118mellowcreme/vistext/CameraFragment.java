@@ -1036,7 +1036,7 @@ public class CameraFragment extends Fragment
     private String getLatestImage() {
         String result = "";
         try {
-            File parentDir = new File(mFile.getParent());
+            File parentDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + "VisText");
             File[] images = parentDir.listFiles();
             File newestImage = images[0];
             for(File image : images) {

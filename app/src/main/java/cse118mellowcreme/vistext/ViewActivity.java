@@ -17,12 +17,15 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -31,6 +34,8 @@ import org.json.JSONArray;
 import java.io.File;
 import java.util.Vector;
 
+import me.kaede.tagview.OnTagClickListener;
+import me.kaede.tagview.OnTagDeleteListener;
 import me.kaede.tagview.Tag;
 import me.kaede.tagview.TagView;
 
@@ -58,12 +63,52 @@ public class ViewActivity extends AppCompatActivity
         //tag view start
         View headerLayout = navigationView.getHeaderView(0);
         tagView = (TagView) headerLayout.findViewById(R.id.tagview);
+        //SET LISTENER
+        tagView.setOnTagClickListener(new OnTagClickListener() {
+
+            @Override
+            public void onTagClick(int position, Tag tag) {
+                //Toast.makeText(ViewActivity.this, "click tag id = " + tag.id + " position = " + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+        tagView.setOnTagDeleteListener(new OnTagDeleteListener() {
+
+            @Override
+            public void onTagDeleted(int position, Tag tag) {
+                try {
+                    File jpgFile = new File(currentFile);
+                    if (jpgFile.exists()) {
+                        Toast.makeText(ViewActivity.this, "Deleted tag id = "
+                                + tag.text + " from " + jpgFile.getName(), Toast.LENGTH_SHORT).show();
+
+                        ExifInterface exif = new ExifInterface(jpgFile.getAbsolutePath());
+
+                        JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
+                        Vector<String> currentTags = new Vector<>();
+                        for (int i = 0; i < json.length(); i++) {
+                            String entry = (String) json.get(i);
+                            if(!entry.toString().equals(tag.text))
+                                    currentTags.add(entry.toString());
+                        }
+
+                        JSONArray jsonOut = new JSONArray(currentTags);
+                        exif.setAttribute(ExifInterface.TAG_USER_COMMENT, jsonOut.toString());
+                        exif.saveAttributes();
+
+                        refreshTags();
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
         try {
 
             Intent intent = getIntent();
             Bundle extras = intent.getExtras();
             currentFile = extras.getString("file");
-            Log.i("tag read", currentFile);
+            Log.i("tag_read", currentFile);
             File jpgFile = new File(currentFile);
             if(jpgFile.exists()) {
                 refreshTags();
@@ -85,6 +130,8 @@ public class ViewActivity extends AppCompatActivity
                 public void onClick(View view) {
                     Log.i("Addtags Button", "Clicked");
                     try {
+                        EditText editText = (EditText)findViewById(R.id.editText);
+                        editText.setText("");
                         findViewById(R.id.button7).setVisibility(View.VISIBLE);
                         findViewById(R.id.button8).setVisibility(View.VISIBLE);
                         findViewById(R.id.editText).setVisibility(View.VISIBLE);
@@ -103,6 +150,8 @@ public class ViewActivity extends AppCompatActivity
                 public void onClick(View view) {
                     try {
                         Log.i("CancelAddTags Button", "Clicked");
+                        EditText editText = (EditText)findViewById(R.id.editText);
+                        editText.setText("");
                         findViewById(R.id.button7).setVisibility(View.GONE);
                         findViewById(R.id.button8).setVisibility(View.GONE);
                         findViewById(R.id.editText).setVisibility(View.GONE);
@@ -112,6 +161,54 @@ public class ViewActivity extends AppCompatActivity
                     }
                 }
             });
+
+
+            Button confirmAddTagsButton = (Button) constraintLayout.findViewById(R.id.button7);
+            confirmAddTagsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        Log.i("confirmAddTagsButton", "Clicked");
+                        EditText editText = (EditText)findViewById(R.id.editText);
+                        Editable input = editText.getText();
+                        if(input.toString() != "") {
+                            File jpgFile = new File(currentFile);
+                            if(!jpgFile.exists()){
+                                Log.e("tag write", "Jpg doesn't exist");
+                                return;
+                            }
+
+                            ExifInterface exif = new ExifInterface(jpgFile.getAbsolutePath());
+
+                            JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
+                            Log.e("JSON", json.toString());
+                            Vector<String> currentTags = new Vector<>();
+                            for(int i=0; i < json.length(); i++) {
+                                String entry = (String)json.get(i).toString();
+                                currentTags.add(entry);
+                            }
+                            currentTags.add(input.toString());
+                            JSONArray jsonOut = new JSONArray(currentTags);
+
+                            exif.setAttribute(ExifInterface.TAG_USER_COMMENT, jsonOut.toString());
+                            exif.saveAttributes();
+
+                            Toast.makeText(ViewActivity.this, "Inserted tag id = "
+                                    + input.toString() + " into " + jpgFile.getName(), Toast.LENGTH_SHORT).show();
+
+                            refreshTags();
+                            editText.setText("");
+                            findViewById(R.id.button7).setVisibility(View.GONE);
+                            findViewById(R.id.button8).setVisibility(View.GONE);
+                            findViewById(R.id.editText).setVisibility(View.GONE);
+                            findViewById(R.id.textView).setVisibility(View.GONE);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
