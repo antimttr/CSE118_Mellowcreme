@@ -24,7 +24,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".GalleryActivity" />
-        <activity android:name=".ViewActivity" />
+        <activity
+            android:name=".ViewActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity android:name=".GalleryInnerActivity"></activity>
     </application>
 
