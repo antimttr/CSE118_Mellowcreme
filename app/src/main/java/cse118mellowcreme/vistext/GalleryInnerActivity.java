@@ -68,7 +68,8 @@ public class GalleryInnerActivity extends AppCompatActivity {
 
         //set the picture files in the gallery
         GridView gridView = (GridView) findViewById(R.id.gridView2);
-        gridView.setAdapter(new ImageAdapter(this));
+        gridView.setAdapter(new ImageAdapter(this, pictures));
+
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {

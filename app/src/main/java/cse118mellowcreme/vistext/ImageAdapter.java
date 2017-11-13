@@ -1,11 +1,18 @@
 package cse118mellowcreme.vistext;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Kristin Agcaoili on 11/12/2017.
@@ -14,13 +21,16 @@ import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
+    private List<File> galleryPictures;
 
-    public ImageAdapter(Context c) {
+    public ImageAdapter(Context c, List<File> pictures) {
         mContext = c;
+        galleryPictures = pictures;
     }
 
     public int getCount() {
-        return mThumbIds.length;
+        //return mThumbIds.length;
+        return galleryPictures.size();
     }
 
     public Object getItem(int position) {
@@ -42,10 +52,36 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageResource(mThumbIds[position]);
+        FileInputStream fs = null;
+        Bitmap bm;
+        //BitmapFactory.Options bfOptions = new BitmapFactory.Options();
+        //bfOptions.inDither = false;
+        //bfOptions.inPurgeable = true;
+
+        try {
+            fs = new FileInputStream(galleryPictures.get(position));
+            if (fs != null) {
+                bm = BitmapFactory.decodeFileDescriptor(fs.getFD());
+                //bm = BitmapFactory.decodeFileDescriptor(fs.getFD(), null, bfOptions);
+                imageView.setImageBitmap(bm);
+                imageView.setId(position);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fs != null) {
+                try {
+                    fs.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        //imageView.setImageResource(mThumbIds[position]);
         return imageView;
     }
 
+    /*
     private Integer[] mThumbIds = {
             R.drawable.sample_2, R.drawable.sample_3,
             R.drawable.sample_4, R.drawable.sample_5,
@@ -59,6 +95,7 @@ public class ImageAdapter extends BaseAdapter {
             R.drawable.sample_4, R.drawable.sample_5,
             R.drawable.sample_6, R.drawable.sample_7
     };
+    */
 
 
 
