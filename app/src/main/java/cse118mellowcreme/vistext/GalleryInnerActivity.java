@@ -46,22 +46,15 @@ public class GalleryInnerActivity extends AppCompatActivity {
         for (File image : allPictures) {
             try {
                 if (category.equals("All")) {
-                    Log.d("GALLERY sent to ", category);
                     galleryPictures.add(image);
                 } else {
-                    Log.d("Category is not all", "category is not all");
                     ExifInterface exif = new ExifInterface(image.getAbsolutePath());
                     String tagList = exif.getAttribute(ExifInterface.TAG_USER_COMMENT);
                     if (exif != null && tagList != null && !tagList.equals("")) {
                         JSONArray json = new JSONArray(tagList);
                         if (categoryMap.isInCategory(category, json)) {
                             galleryPictures.add(image);
-                            Log.d("GALLERY: ", "added image");
-                        } else {
-                            Log.d("GALLERY: ", "doesn't belong anywhere");
                         }
-                    } else {
-                        Log.d("GALLERY:", "everything is NULL");
                     }
                 }
             } catch (Exception e) {
@@ -69,41 +62,6 @@ public class GalleryInnerActivity extends AppCompatActivity {
             }
         }
 
-
-/*
-        for(File image : allPictures) {
-            try {
-                Log.d("PATH GALLERY", image.getAbsolutePath());
-                ExifInterface exif = new ExifInterface(image.getAbsolutePath());
-                Log.d("JSON string", exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
-                String tagList = exif.getAttribute(ExifInterface.TAG_USER_COMMENT);
-                if (tagList != "") {
-                    JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
-                    if (category == "All") {
-                        Log.d("GALLERYinMethod", category);
-                        galleryPictures.add(image);
-                    } else {
-                        if (categoryMap.isInCategory(category, json)) {
-                            galleryPictures.add(image);
-                            Log.d("GALLERY: ", "added image");
-                        } else {
-                            Log.d("GALLERY: ", "doesn't belong anywhere");
-                        }
-                    }
-                } else {
-                    if (category == "All") {
-                        galleryPictures.add(image);
-                    }
-                }
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        */
         //add the picture or something to a list to show in the gallery
         return galleryPictures;
     }
@@ -119,12 +77,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
         category = intent.getStringExtra("CategoryChosen");
         categoryName.setText(category);
 
-        Log.d("GALLERY", category);
-
         categoryMap = new CategoryMaps();
         categoryMap.buildCategories();
 
-        //List<File> pictures = new ArrayList<File>(); //pictures that will be visible in the gallery
         final List<File> pictures = getPicturesWithContext();
 
         //set the picture files in the gallery
@@ -134,8 +89,6 @@ public class GalleryInnerActivity extends AppCompatActivity {
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                //Toast.makeText(GalleryInnerActivity.this, "" + position, Toast.LENGTH_SHORT).show();
-                //Toast.makeText(GalleryInnerActivity.this, parent., Toast.LENGTH_SHORT).show();
                 Toast.makeText(GalleryInnerActivity.this, pictures.get(position).getAbsolutePath(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(GalleryInnerActivity.this, ViewActivity.class);
                 intent.putExtra("file", pictures.get(position).getAbsolutePath());

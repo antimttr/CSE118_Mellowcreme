@@ -87,12 +87,10 @@ public class CategoryMaps {
         List<String> category = convertStringToCategory(categoryStr);
 
         if (category != null) {
-            Log.d("GALLERY", "category is not null");
             for (int i = 0; i < labels.length(); i++) {
                 try {
-                    Log.d("GALLERY", "checking labels " + i + " is: " + labels.get(i));
+                    //Log.d("GALLERY", "checking labels " + i + " is: " + labels.get(i));
                     if (category.contains((labels.get(i)))) {
-                        Log.d("GGALLERY", "category " + categoryStr + " contains the label");
                         return true;
                     }
                 } catch (Exception e) {

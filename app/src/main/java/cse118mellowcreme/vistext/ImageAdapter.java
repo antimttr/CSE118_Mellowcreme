@@ -31,7 +31,6 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-        //return mThumbIds.length;
         return galleryPictures.size();
     }
 
@@ -54,54 +53,11 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        /*
-        FileInputStream fs = null;
-        Bitmap bm;
-        //BitmapFactory.Options bfOptions = new BitmapFactory.Options();
-        //bfOptions.inDither = false;
-        //bfOptions.inPurgeable = true;
-
-        try {
-            fs = new FileInputStream(galleryPictures.get(position));
-            if (fs != null) {
-                bm = BitmapFactory.decodeFileDescriptor(fs.getFD());
-                //bm = BitmapFactory.decodeFileDescriptor(fs.getFD(), null, bfOptions);
-                imageView.setImageBitmap(bm);
-                imageView.setId(position);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fs != null) {
-                try {
-                    fs.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        */
 
         Picasso.with(mContext).load((galleryPictures.get(position))).fit().centerCrop().into(imageView);
-        //imageView.setImageResource(mThumbIds[position]);
         return imageView;
     }
 
-    /*
-    private Integer[] mThumbIds = {
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7
-    };
-    */
 
 
 
