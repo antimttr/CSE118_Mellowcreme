@@ -1,5 +1,7 @@
 package cse118mellowcreme.vistext;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 
 import java.util.ArrayList;
@@ -66,15 +68,15 @@ public class CategoryMaps {
     }
 
     private List<String> convertStringToCategory(String categoryStr) {
-        if (categoryStr == "Active") {
+        if (categoryStr.equals("Active")) {
             return categoryActive;
-        } else if (categoryStr == "Entertainment") {
+        } else if (categoryStr.equals("Entertainment")) {
             return categoryEntertainment;
-        } else if (categoryStr == "Lifestyle") {
+        } else if (categoryStr.equals("Lifestyle")) {
             return categoryLifestyle;
-        } else if (categoryStr == "Location") {
+        } else if (categoryStr.equals("Location")) {
             return categoryLocation;
-        } else if (categoryStr == "Travel") {
+        } else if (categoryStr.equals("Travel")) {
             return categoryTravel;
         }
         return null;
@@ -85,9 +87,12 @@ public class CategoryMaps {
         List<String> category = convertStringToCategory(categoryStr);
 
         if (category != null) {
+            Log.d("GALLERY", "category is not null");
             for (int i = 0; i < labels.length(); i++) {
                 try {
+                    Log.d("GALLERY", "checking labels " + i + " is: " + labels.get(i));
                     if (category.contains((labels.get(i)))) {
+                        Log.d("GGALLERY", "category " + categoryStr + " contains the label");
                         return true;
                     }
                 } catch (Exception e) {

@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -52,6 +54,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
+        /*
         FileInputStream fs = null;
         Bitmap bm;
         //BitmapFactory.Options bfOptions = new BitmapFactory.Options();
@@ -77,6 +80,9 @@ public class ImageAdapter extends BaseAdapter {
                 }
             }
         }
+        */
+
+        Picasso.with(mContext).load((galleryPictures.get(position))).fit().centerCrop().into(imageView);
         //imageView.setImageResource(mThumbIds[position]);
         return imageView;
     }
