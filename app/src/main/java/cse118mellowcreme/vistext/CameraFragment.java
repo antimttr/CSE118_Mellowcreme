@@ -1010,20 +1010,21 @@ public class CameraFragment extends Fragment
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            // take picture button
             case R.id.takePicture: {
                 takePicture();
                 break;
             }
+            // go to gallery button
             case R.id.galleryButton: {
                 Intent intent = new Intent(this.getActivity(), GalleryActivity.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                 startActivity(intent);
                 break;
             }
+            // last picture taken button
             case R.id.lastPictureTaken: {
                 Intent intent = new Intent(this.getActivity(), ViewActivity.class);
                 intent.putExtra("file", getLatestImage());
-                 //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                 startActivity(intent);
             }
         }
