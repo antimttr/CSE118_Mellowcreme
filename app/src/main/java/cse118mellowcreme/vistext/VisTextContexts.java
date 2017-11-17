@@ -21,6 +21,19 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import clarifai2.api.ClarifaiBuilder;
+import clarifai2.api.ClarifaiClient;
+import clarifai2.api.ClarifaiResponse;
+import clarifai2.api.request.input.SearchClause;
+import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.input.ClarifaiImage;
+import clarifai2.dto.model.ConceptModel;
+import clarifai2.dto.model.output.ClarifaiOutput;
+import clarifai2.dto.model.output_info.ConceptOutputInfo;
+import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.search.SearchInputsResult;
+import okhttp3.OkHttpClient;
+
 /**
  * Created by MWEST on 11/4/2017.
  * This class creates a list of the current context tags gathered from Extrasensory. It is updated
@@ -28,6 +41,9 @@ import java.util.Vector;
  */
 
 public class VisTextContexts {
+
+    // initializes client
+    // new ClarifaiBuilder("ac03b9b00ed8434ca1658de149f9e05e").client(new OkHttpClient()).buildSync(); // or use .build() to get a Future<ClarifaiClient>
 
     private Vector<String> tagList;
     private ArrayList<Pair<String, Double>> rawPredictions;
@@ -146,6 +162,19 @@ public class VisTextContexts {
                     tagList.add(app.getTagMaps().getTag(prediction.first));
                 }
             }
+
+            /* Clarifai tags
+            
+            for (String filename : filenames) {
+                Model<Concept> generalModel = client.getDefaultModels().generalModel();
+                PredictRequest<Concept> request = generalModel.predict().withInputs(ClarifaiInput.forImage(new File(filename)));
+                
+                // The API will return a list of concepts with corresponding probabilities of how likely it is these concepts are contained within the image.
+                List<ClarifaiOutput<Concept>> results = request.executeSync().get();
+            }
+            
+            */
+
             Log.i("Last Tag Data Read", tagList.toString());
         } catch (Exception e) {
             e.printStackTrace();
