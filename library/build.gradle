@@ -18,5 +18,6 @@ android {
 }
 dependencies {
     compile 'com.android.support:support-annotations:23.3.0'
+    compile "com.clarifai:clarifai-api-java:1.2.0"
 }
 
