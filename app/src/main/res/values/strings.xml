@@ -1,4 +1,5 @@
 <resources>
+    <string name="clarifai_api_key">ac03b9b00ed8434ca1658de149f9e05e</string>
     <string name="app_name">VisText</string>
     <string name="picture">Picture</string>
     <string name="gallery">Gallery</string>
