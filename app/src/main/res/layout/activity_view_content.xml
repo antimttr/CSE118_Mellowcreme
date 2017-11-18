@@ -29,7 +29,7 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_revert" />
+        app:srcCompat="@android:drawable/ic_dialog_info" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"

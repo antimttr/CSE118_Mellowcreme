@@ -47,6 +47,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -61,7 +62,10 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -530,6 +534,7 @@ public class CameraFragment extends Fragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        refreshImageButton();
         /*try {
             mFile = createImageFile();
         } catch(IOException e) {
@@ -542,6 +547,7 @@ public class CameraFragment extends Fragment
         super.onResume();
         startBackgroundThread();
         hideSoftKeyboard();
+        refreshImageButton();
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
         // a camera and start preview from here (otherwise, we wait until the surface is ready in
@@ -570,11 +576,17 @@ public class CameraFragment extends Fragment
     }
 
     private void requestCameraPermission() {
-        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
-                || shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
             new ConfirmationDialog().show(getChildFragmentManager(), FRAGMENT_DIALOG);
         } else {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        }
+    }
+
+    private void requestExternalStoragePermission() {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            new ConfirmationDialog2().show(getChildFragmentManager(), FRAGMENT_DIALOG);
+        } else {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
         }
@@ -715,6 +727,11 @@ public class CameraFragment extends Fragment
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission();
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestExternalStoragePermission();
             return;
         }
         setUpCameraOutputs(width, height);
@@ -961,6 +978,14 @@ public class CameraFragment extends Fragment
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    Handler uiHandler = new Handler(Looper.getMainLooper());
+                    uiHandler.post(new Runnable(){
+                        @Override
+                        public void run() {
+                            refreshImageButton();
+                        }
+                    });
+
                 }
             };
 
@@ -1166,6 +1191,36 @@ public class CameraFragment extends Fragment
                         public void onClick(DialogInterface dialog, int which) {
                             parent.requestPermissions(new String[]{Manifest.permission.CAMERA},
                                     REQUEST_CAMERA_PERMISSION);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Activity activity = parent.getActivity();
+                                    if (activity != null) {
+                                        activity.finish();
+                                    }
+                                }
+                            })
+                    .create();
+        }
+    }
+
+    /**
+     * Shows OK/Cancel confirmation dialog about camera permission.
+     */
+    public static class ConfirmationDialog2 extends DialogFragment {
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Fragment parent = getParentFragment();
+            return new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.request_permission2)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
                             parent.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                                     MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
                         }
@@ -1183,5 +1238,13 @@ public class CameraFragment extends Fragment
                     .create();
         }
     }
+    private void refreshImageButton() {
+        String latestFile = getLatestImage();
 
+        File jpgFile = new File(latestFile);
+        if(jpgFile.exists()) {
+            ImageView imageView = (ImageView) getActivity().findViewById(R.id.lastPictureTaken);
+            Picasso.with(getActivity()).load(jpgFile).fit().centerCrop().into(imageView);
+        }
+    }
 }
