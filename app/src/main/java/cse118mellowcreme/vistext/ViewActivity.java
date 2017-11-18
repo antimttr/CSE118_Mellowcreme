@@ -130,7 +130,7 @@ public class ViewActivity extends AppCompatActivity
             if(jpgFile.exists()) {
                 refreshTags();
                 ImageView imageView = (ImageView) findViewById(R.id.imageView);
-                Picasso.with(this).load(jpgFile).fit().centerCrop().into(imageView);
+                Picasso.with(this).load(jpgFile).fit().centerInside().into(imageView);
             }
 
             Button addTagsButton = (Button) headerLayout.findViewById(R.id.addTags);
