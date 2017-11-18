@@ -18,4 +18,34 @@ public class GalleryActivity extends AppCompatActivity {
         intent.putExtra("CategoryChosen", "All");
         startActivity(intent);
     }
+
+    public void viewActive(View view) {
+        Intent intent = new Intent(this, GalleryInnerActivity.class);
+        intent.putExtra("CategoryChosen", "Active");
+        startActivity(intent);
+    }
+
+    public void viewEntertainment(View view) {
+        Intent intent = new Intent(this, GalleryInnerActivity.class);
+        intent.putExtra("CategoryChosen", "Entertainment");
+        startActivity(intent);
+    }
+
+    public void viewLifestyle(View view) {
+        Intent intent = new Intent(this, GalleryInnerActivity.class);
+        intent.putExtra("CategoryChosen", "Lifestyle");
+        startActivity(intent);
+    }
+
+    public void viewLocation(View view) {
+        Intent intent = new Intent(this, GalleryInnerActivity.class);
+        intent.putExtra("CategoryChosen", "Location");
+        startActivity(intent);
+    }
+
+    public void viewTravel(View view) {
+        Intent intent = new Intent(this, GalleryInnerActivity.class);
+        intent.putExtra("CategoryChosen", "Travel");
+        startActivity(intent);
+    }
 }

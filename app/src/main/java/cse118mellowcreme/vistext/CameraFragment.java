@@ -948,7 +948,7 @@ public class CameraFragment extends Fragment
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
                     showToast("Saved: " + mFile);
-                    Log.d(TAG, mFile.toString());
+                    //Log.d(TAG, mFile.toString());
                     unlockFocus();
                     try {
                         ExifInterface exif = new ExifInterface(mFile.getAbsolutePath());
