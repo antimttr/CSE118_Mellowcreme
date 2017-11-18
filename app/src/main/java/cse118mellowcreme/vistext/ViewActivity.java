@@ -57,7 +57,14 @@ public class ViewActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+
+            @Override
+            public void onDrawerOpened(View arg0) {
+                refreshTags();
+            }
+
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -85,7 +92,7 @@ public class ViewActivity extends AppCompatActivity
 
             @Override
             public void onTagClick(int position, Tag tag) {
-                refreshTags();
+                //refreshTags();
                 //Toast.makeText(ViewActivity.this, "click tag id = " + tag.id + " position = " + position, Toast.LENGTH_SHORT).show();
             }
         });
