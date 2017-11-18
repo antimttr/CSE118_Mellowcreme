@@ -1,5 +1,11 @@
 package cse118mellowcreme.vistext;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +17,8 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -42,6 +50,11 @@ import me.kaede.tagview.TagView;
 public class ViewActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
     private TagView tagView;
+
+    public String getCurrentFile() {
+        return currentFile;
+    }
+
     private String currentFile;
 
     @Override
@@ -116,93 +129,15 @@ public class ViewActivity extends AppCompatActivity
                 Picasso.with(this).load(jpgFile).fit().centerCrop().into(imageView);
             }
 
-
-            ConstraintLayout constraintLayout = (ConstraintLayout) findViewById(R.id.view_content_layout);
-            constraintLayout.findViewById(R.id.button7).setVisibility(View.GONE);
-            constraintLayout.findViewById(R.id.button8).setVisibility(View.GONE);
-            constraintLayout.findViewById(R.id.editText).setVisibility(View.GONE);
-            constraintLayout.findViewById(R.id.textView).setVisibility(View.GONE);
-
-
             Button addTagsButton = (Button) headerLayout.findViewById(R.id.addTags);
             addTagsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.i("Addtags Button", "Clicked");
                     try {
-                        EditText editText = (EditText)findViewById(R.id.editText);
-                        editText.setText("");
-                        findViewById(R.id.button7).setVisibility(View.VISIBLE);
-                        findViewById(R.id.button8).setVisibility(View.VISIBLE);
-                        findViewById(R.id.editText).setVisibility(View.VISIBLE);
-                        findViewById(R.id.textView).setVisibility(View.VISIBLE);
-                        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                        drawer.closeDrawer(GravityCompat.START);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            Button cancelAddTagsButton = (Button) constraintLayout.findViewById(R.id.button8);
-            cancelAddTagsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        Log.i("CancelAddTags Button", "Clicked");
-                        EditText editText = (EditText)findViewById(R.id.editText);
-                        editText.setText("");
-                        findViewById(R.id.button7).setVisibility(View.GONE);
-                        findViewById(R.id.button8).setVisibility(View.GONE);
-                        findViewById(R.id.editText).setVisibility(View.GONE);
-                        findViewById(R.id.textView).setVisibility(View.GONE);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-
-            Button confirmAddTagsButton = (Button) constraintLayout.findViewById(R.id.button7);
-            confirmAddTagsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        Log.i("confirmAddTagsButton", "Clicked");
-                        EditText editText = (EditText)findViewById(R.id.editText);
-                        Editable input = editText.getText();
-                        if(input.toString() != "") {
-                            File jpgFile = new File(currentFile);
-                            if(!jpgFile.exists()){
-                                Log.e("tag write", "Jpg doesn't exist");
-                                return;
-                            }
-
-                            ExifInterface exif = new ExifInterface(jpgFile.getAbsolutePath());
-
-                            JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
-                            Log.e("JSON", json.toString());
-                            Vector<String> currentTags = new Vector<>();
-                            for(int i=0; i < json.length(); i++) {
-                                String entry = (String)json.get(i).toString();
-                                currentTags.add(entry);
-                            }
-                            currentTags.add(input.toString());
-                            JSONArray jsonOut = new JSONArray(currentTags);
-
-                            exif.setAttribute(ExifInterface.TAG_USER_COMMENT, jsonOut.toString());
-                            exif.saveAttributes();
-
-                            Toast.makeText(ViewActivity.this, "Inserted tag id = "
-                                    + input.toString() + " into " + jpgFile.getName(), Toast.LENGTH_SHORT).show();
-
-                            refreshTags();
-                            editText.setText("");
-                            findViewById(R.id.button7).setVisibility(View.GONE);
-                            findViewById(R.id.button8).setVisibility(View.GONE);
-                            findViewById(R.id.editText).setVisibility(View.GONE);
-                            findViewById(R.id.textView).setVisibility(View.GONE);
-                        }
+                        new ViewActivity.ConfirmationDialog().show(getSupportFragmentManager(), "dialog");
+                        //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                        //drawer.closeDrawer(GravityCompat.START);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -266,9 +201,10 @@ public class ViewActivity extends AppCompatActivity
             tagView.removeAllTags();
 
             ExifInterface exif = new ExifInterface(jpgFile.getAbsolutePath());
+            Log.e("tag_read", exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
             JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
             for(int i=0; i < json.length(); i++) {
-                Tag tag = new Tag((String)json.get(i));
+                Tag tag = new Tag((String)json.get(i).toString());
                 tag.tagTextColor = Color.parseColor("#000000");
                 tag.layoutColor = Color.parseColor("#FFFFFF");
                 tag.layoutColorPress = Color.parseColor("#000000");
@@ -303,6 +239,69 @@ public class ViewActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    /**
+     * Shows OK/Cancel confirmation dialog about camera permission.
+     */
+    public static class ConfirmationDialog extends DialogFragment {
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Fragment parent = getParentFragment();
+            final EditText taskEditText = new EditText(getContext());
+            return new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.request_permission)
+                    .setView(taskEditText)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                Log.i("confirmAddTagsButton", "Clicked");
+                                ViewActivity viewActivity = (ViewActivity)getActivity();
+                                Editable input = taskEditText.getText();
+                                if(input.toString() != "") {
+                                    File jpgFile = new File(viewActivity.getCurrentFile());
+                                    if(!jpgFile.exists()){
+                                        Log.e("tag write", "Jpg doesn't exist");
+                                        return;
+                                    }
+
+                                    ExifInterface exif = new ExifInterface(jpgFile.getAbsolutePath());
+
+                                    JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
+                                    Log.e("JSON", json.toString());
+                                    Vector<String> currentTags = new Vector<>();
+                                    for(int i=0; i < json.length(); i++) {
+                                        String entry = (String)json.get(i).toString();
+                                        currentTags.add(entry);
+                                    }
+                                    currentTags.add(input.toString());
+                                    JSONArray jsonOut = new JSONArray(currentTags);
+
+                                    exif.setAttribute(ExifInterface.TAG_USER_COMMENT, jsonOut.toString());
+                                    exif.saveAttributes();
+
+                                    Toast.makeText(getContext(), "Inserted tag id = "
+                                            + input.toString() + " into " + jpgFile.getName(), Toast.LENGTH_SHORT).show();
+
+                                    viewActivity.refreshTags();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                    .create();
         }
     }
 }
