@@ -85,6 +85,7 @@ public class ViewActivity extends AppCompatActivity
 
             @Override
             public void onTagClick(int position, Tag tag) {
+                refreshTags();
                 //Toast.makeText(ViewActivity.this, "click tag id = " + tag.id + " position = " + position, Toast.LENGTH_SHORT).show();
             }
         });
