@@ -20,10 +20,13 @@ import android.text.Editable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -31,6 +34,8 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import me.kaede.tagview.OnTagClickListener;
@@ -71,6 +76,7 @@ public class ViewActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //shows the drawer if clicked
         ImageButton showDrawerButton = (ImageButton) findViewById(R.id.imageButton2);
         showDrawerButton.setOnClickListener(new View.OnClickListener() {
              @Override
@@ -144,13 +150,128 @@ public class ViewActivity extends AppCompatActivity
                 Picasso.with(this).load(jpgFile).fit().centerInside().into(imageView);
             }
 
+            //add tag button inside drawer
             Button addTagsButton = (Button) headerLayout.findViewById(R.id.addTags);
             addTagsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.i("Addtags Button", "Clicked");
                     try {
-                        new ViewActivity.ConfirmationDialog().show(getSupportFragmentManager(), "dialog");
+                        //new ViewActivity.ConfirmationDialog().show(getSupportFragmentManager(), "dialog");
+
+                        // custom dialog
+                        final Dialog dialog = new Dialog(view.getContext());
+                        view.getRootView().setClipToOutline(true);
+                        dialog.setContentView(R.layout.activity_view_tag_dialog);
+                        dialog.setTitle("Add Tag");
+
+                        final RadioButton radioTextInput = (RadioButton) dialog.findViewById(R.id.radioButton);
+                        final RadioButton radioTextInput2 = (RadioButton) dialog.findViewById(R.id.radioButton2);
+                        final EditText textInput = (EditText) dialog.findViewById(R.id.editText3);
+                        final Spinner tagSelect = (Spinner) dialog.findViewById(R.id.spinner2);
+
+                        tagSelect.setEnabled(false);
+                        VisTextApp visTextApp = (VisTextApp)getApplication();
+                        ArrayList<String> tagList =  visTextApp.getTagMaps().getTagList();
+                        List<String> spinnerArray =  new ArrayList<String>();
+
+                        for (String tag: tagList) {
+                            spinnerArray.add(tag);
+                        }
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                                view.getContext(), android.R.layout.simple_spinner_item, spinnerArray);
+
+                        tagSelect.setAdapter(adapter);
+
+                        radioTextInput.setChecked(true);
+                        //select text input, and deselect tag select by menu
+                        radioTextInput.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                textInput.setFocusable(true);
+                                textInput.setEnabled(true);
+                                textInput.setCursorVisible(true);
+                                tagSelect.setEnabled(false);
+                                radioTextInput.setChecked(true);
+                                radioTextInput2.setChecked(false);
+                            }
+                        });
+
+                        radioTextInput2.setChecked(false);
+                        //selects menu tag selection, and deselect text input
+                        radioTextInput2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                textInput.setFocusable(false);
+                                textInput.setEnabled(false);
+                                textInput.setCursorVisible(false);
+                                tagSelect.setEnabled(true);
+                                radioTextInput2.setChecked(true);
+                                radioTextInput.setChecked(false);
+                            }
+                        });
+
+                        Button dialogCancel = (Button) dialog.findViewById(R.id.button10);
+                        // if button is clicked, close the custom dialog
+                        dialogCancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+
+                                dialog.dismiss();
+                            }
+                        });
+
+
+                        Button dialogButton = (Button) dialog.findViewById(R.id.button9);
+                        // if button is clicked, accept input and close the custom dialog
+                        dialogButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    Log.i("confirmAddTagsButton", "Clicked");
+
+                                    Editable input = textInput.getText();
+                                    String inputString = radioTextInput.isChecked() ? input.toString() : tagSelect.getSelectedItem().toString();
+                                    if(inputString != "") {
+                                        File jpgFile = new File(currentFile);
+                                        if(!jpgFile.exists()){
+                                            Log.e("tag write", "Jpg doesn't exist");
+                                            return;
+                                        }
+
+                                        ExifInterface exif = new ExifInterface(jpgFile.getAbsolutePath());
+
+                                        JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
+                                        Log.e("JSON", json.toString());
+                                        Vector<String> currentTags = new Vector<>();
+                                        for(int i=0; i < json.length(); i++) {
+                                            String entry = json.get(i).toString();
+                                            currentTags.add(entry);
+                                        }
+                                        currentTags.add(inputString);
+                                        JSONArray jsonOut = new JSONArray(currentTags);
+
+                                        exif.setAttribute(ExifInterface.TAG_USER_COMMENT, jsonOut.toString());
+                                        exif.saveAttributes();
+
+                                        Log.e("tag_write", "Inserted tag id = "
+                                                + inputString + " into " + jpgFile.getName());
+
+                                        refreshTags();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialog.show();
+
+
+
                         //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                         //drawer.closeDrawer(GravityCompat.START);
                     } catch (Exception e) {

@@ -1,6 +1,9 @@
 package cse118mellowcreme.vistext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Kristin Agcaoili on 11/4/2017.
@@ -62,6 +65,18 @@ public class TagMap {
         tagMap.put("With friends", "friends");
     }
 
+    public ArrayList<String> getTagList() {
+        ArrayList<String> result = new ArrayList<>();
+        Iterator it = tagMap.entrySet().iterator();
+        while(it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            if(!pair.getKey().equals("")) {
+                result.add((String)pair.getKey());
+            }
+        }
+        return result;
+    }
+    
     public String getTag(String label) {
         return tagMap.get(label);
     }
