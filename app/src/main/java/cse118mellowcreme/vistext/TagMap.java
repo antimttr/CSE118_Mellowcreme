@@ -70,8 +70,8 @@ public class TagMap {
         Iterator it = tagMap.entrySet().iterator();
         while(it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            if(!pair.getKey().equals("")) {
-                result.add((String)pair.getKey());
+            if(!pair.getValue().equals("")) {
+                result.add((String)pair.getValue());
             }
         }
         return result;

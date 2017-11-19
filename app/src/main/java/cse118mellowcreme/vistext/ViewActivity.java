@@ -250,7 +250,8 @@ public class ViewActivity extends AppCompatActivity
                                             String entry = json.get(i).toString();
                                             currentTags.add(entry);
                                         }
-                                        currentTags.add(inputString);
+                                        if(!currentTags.contains(inputString))
+                                            currentTags.add(inputString);
                                         JSONArray jsonOut = new JSONArray(currentTags);
 
                                         exif.setAttribute(ExifInterface.TAG_USER_COMMENT, jsonOut.toString());

@@ -411,8 +411,10 @@ public class CameraFragment extends Fragment
                 esDataTimerHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        VisTextApp app = (VisTextApp)getActivity().getApplication();
-                        try { app.getContexts().checkTags(getActivity()); }
+
+                        try {
+                            VisTextApp app = (VisTextApp)getActivity().getApplication();
+                            app.getContexts().checkTags(getActivity()); }
                         catch (Exception e) {
                             e.printStackTrace();
                         }
