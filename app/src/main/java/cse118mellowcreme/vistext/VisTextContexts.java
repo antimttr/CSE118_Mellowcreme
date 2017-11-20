@@ -171,6 +171,7 @@ public class VisTextContexts {
             // https://clarifai.com/developer/guide/#api-clients
             
             // outputs -> data -> concepts -> [id | name (tag) | app_id | value (probability)]
+            // => concepts -> [id | name | app_id | value]
                         
             String current_file = (current picture file path to retrieve tags for);
             
