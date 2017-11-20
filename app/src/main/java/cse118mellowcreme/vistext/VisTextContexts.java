@@ -166,6 +166,11 @@ public class VisTextContexts {
             }
 
             /* Clarifai tags
+            
+            // see form of return results
+            // https://clarifai.com/developer/guide/#api-clients
+            
+            // outputs -> data -> concepts -> [id | name (tag) | app_id | value (probability)]
                         
             String current_file = (current picture file path to retrieve tags for);
             
@@ -173,13 +178,12 @@ public class VisTextContexts {
             PredictRequest<Concept> request = generalModel.predict().withInputs(ClarifaiInput.forImage(new File(current_file)));
                 
             // The API will return a list of concepts with corresponding probabilities of how likely it is these concepts are contained within the image.
-            // {[concept_1 | probability_1], [concept_2 | probability_2], ..., [concept_n | probability_n]}
             List<ClarifaiOutput<Concept>> results = request.executeSync().get();
             
             // access probabilities and add concepts (tags from Clarifai) to tag map as needed
-            if (Clarifai prediction > 0.5f) {
+            if (Clarifai prediction [outputs->data->concepts->value] > 0.5f) {
               VisTextApp app = (VisTextApp)currentActivity.getApplication();
-              tagList.add(app.getTagMaps().getTag(Clarifai concept -- picture tag));
+              tagList.add(app.getTagMaps().getTag(Clarifai concept [outputs->data->concepts->name]));
             }
                 
             */
