@@ -173,7 +173,7 @@ public class VisTextContexts {
             // The API will return a list of concepts with corresponding probabilities of how likely it is these concepts are contained within the image.
             List<ClarifaiOutput<Concept>> results = request.executeSync().get();
             
-            // access probabilities and add to tag map as needed
+            // access probabilities and add concepts (tags from Clarifai) to tag map as needed
                 
             */
 
