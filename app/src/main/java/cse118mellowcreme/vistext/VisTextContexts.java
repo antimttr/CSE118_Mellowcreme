@@ -34,6 +34,11 @@ import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.search.SearchInputsResult;
 import okhttp3.OkHttpClient;
 
+ /*
+ // initializes client
+ new ClarifaiBuilder("ac03b9b00ed8434ca1658de149f9e05e").client(new OkHttpClient()).buildSync(); // or use .build() to get a Future<ClarifaiClient>
+ */
+
 /**
  * Created by MWEST on 11/4/2017.
  * This class creates a list of the current context tags gathered from Extrasensory. It is updated
@@ -161,10 +166,7 @@ public class VisTextContexts {
             }
 
             /* Clarifai tags
-            
-            // initializes client
-            new ClarifaiBuilder("ac03b9b00ed8434ca1658de149f9e05e").client(new OkHttpClient()).buildSync(); // or use .build() to get a Future<ClarifaiClient>
-            
+                        
             String current_file = (current picture file path to retrieve tags for);
             
             Model<Concept> generalModel = client.getDefaultModels().generalModel();
@@ -174,6 +176,10 @@ public class VisTextContexts {
             List<ClarifaiOutput<Concept>> results = request.executeSync().get();
             
             // access probabilities and add concepts (tags from Clarifai) to tag map as needed
+            if (Clarifai prediction > 0.5f) {
+              VisTextApp app = (VisTextApp)currentActivity.getApplication();
+              tagList.add(app.getTagMaps().getTag(Clarifai picture tag));
+            }
                 
             */
 
