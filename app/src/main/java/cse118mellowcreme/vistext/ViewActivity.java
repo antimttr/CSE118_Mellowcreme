@@ -1,16 +1,15 @@
 package cse118mellowcreme.vistext;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.ExifInterface;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,10 +20,13 @@ import android.text.Editable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -32,6 +34,8 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import me.kaede.tagview.OnTagClickListener;
@@ -42,6 +46,11 @@ import me.kaede.tagview.TagView;
 public class ViewActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
     private TagView tagView;
+
+    public String getCurrentFile() {
+        return currentFile;
+    }
+
     private String currentFile;
 
     @Override
@@ -53,12 +62,33 @@ public class ViewActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+
+            @Override
+            public void onDrawerOpened(View arg0) {
+                refreshTags();
+            }
+
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //shows the drawer if clicked
+        ImageButton showDrawerButton = (ImageButton) findViewById(R.id.imageButton2);
+        showDrawerButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 try {
+                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                     drawer.openDrawer(GravityCompat.START);
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                 }
+             }
+        });
 
         //tag view start
         View headerLayout = navigationView.getHeaderView(0);
@@ -68,6 +98,10 @@ public class ViewActivity extends AppCompatActivity
 
             @Override
             public void onTagClick(int position, Tag tag) {
+                Intent intent = new Intent(ViewActivity.this, GalleryInnerActivity.class);
+                intent.putExtra("TagSearch",  tag.text);
+                startActivity(intent);
+
                 //Toast.makeText(ViewActivity.this, "click tag id = " + tag.id + " position = " + position, Toast.LENGTH_SHORT).show();
             }
         });
@@ -113,96 +147,134 @@ public class ViewActivity extends AppCompatActivity
             if(jpgFile.exists()) {
                 refreshTags();
                 ImageView imageView = (ImageView) findViewById(R.id.imageView);
-                Picasso.with(this).load(jpgFile).fit().centerCrop().into(imageView);
+                Picasso.with(this).load(jpgFile).fit().centerInside().into(imageView);
             }
 
-
-            ConstraintLayout constraintLayout = (ConstraintLayout) findViewById(R.id.view_content_layout);
-            constraintLayout.findViewById(R.id.button7).setVisibility(View.GONE);
-            constraintLayout.findViewById(R.id.button8).setVisibility(View.GONE);
-            constraintLayout.findViewById(R.id.editText).setVisibility(View.GONE);
-            constraintLayout.findViewById(R.id.textView).setVisibility(View.GONE);
-
-
+            //add tag button inside drawer
             Button addTagsButton = (Button) headerLayout.findViewById(R.id.addTags);
             addTagsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.i("Addtags Button", "Clicked");
                     try {
-                        EditText editText = (EditText)findViewById(R.id.editText);
-                        editText.setText("");
-                        findViewById(R.id.button7).setVisibility(View.VISIBLE);
-                        findViewById(R.id.button8).setVisibility(View.VISIBLE);
-                        findViewById(R.id.editText).setVisibility(View.VISIBLE);
-                        findViewById(R.id.textView).setVisibility(View.VISIBLE);
-                        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                        drawer.closeDrawer(GravityCompat.START);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+                        //new ViewActivity.ConfirmationDialog().show(getSupportFragmentManager(), "dialog");
 
-            Button cancelAddTagsButton = (Button) constraintLayout.findViewById(R.id.button8);
-            cancelAddTagsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        Log.i("CancelAddTags Button", "Clicked");
-                        EditText editText = (EditText)findViewById(R.id.editText);
-                        editText.setText("");
-                        findViewById(R.id.button7).setVisibility(View.GONE);
-                        findViewById(R.id.button8).setVisibility(View.GONE);
-                        findViewById(R.id.editText).setVisibility(View.GONE);
-                        findViewById(R.id.textView).setVisibility(View.GONE);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+                        // custom dialog
+                        final Dialog dialog = new Dialog(view.getContext());
+                        view.getRootView().setClipToOutline(true);
+                        dialog.setContentView(R.layout.activity_view_tag_dialog);
+                        dialog.setTitle("Add Tag");
 
+                        final RadioButton radioTextInput = (RadioButton) dialog.findViewById(R.id.radioButton);
+                        final RadioButton radioTextInput2 = (RadioButton) dialog.findViewById(R.id.radioButton2);
+                        final EditText textInput = (EditText) dialog.findViewById(R.id.editText3);
+                        final Spinner tagSelect = (Spinner) dialog.findViewById(R.id.spinner2);
 
-            Button confirmAddTagsButton = (Button) constraintLayout.findViewById(R.id.button7);
-            confirmAddTagsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        Log.i("confirmAddTagsButton", "Clicked");
-                        EditText editText = (EditText)findViewById(R.id.editText);
-                        Editable input = editText.getText();
-                        if(input.toString() != "") {
-                            File jpgFile = new File(currentFile);
-                            if(!jpgFile.exists()){
-                                Log.e("tag write", "Jpg doesn't exist");
-                                return;
-                            }
+                        tagSelect.setEnabled(false);
+                        VisTextApp visTextApp = (VisTextApp)getApplication();
+                        ArrayList<String> tagList =  visTextApp.getTagMaps().getTagList();
+                        List<String> spinnerArray =  new ArrayList<String>();
 
-                            ExifInterface exif = new ExifInterface(jpgFile.getAbsolutePath());
-
-                            JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
-                            Log.e("JSON", json.toString());
-                            Vector<String> currentTags = new Vector<>();
-                            for(int i=0; i < json.length(); i++) {
-                                String entry = (String)json.get(i).toString();
-                                currentTags.add(entry);
-                            }
-                            currentTags.add(input.toString());
-                            JSONArray jsonOut = new JSONArray(currentTags);
-
-                            exif.setAttribute(ExifInterface.TAG_USER_COMMENT, jsonOut.toString());
-                            exif.saveAttributes();
-
-                            Toast.makeText(ViewActivity.this, "Inserted tag id = "
-                                    + input.toString() + " into " + jpgFile.getName(), Toast.LENGTH_SHORT).show();
-
-                            refreshTags();
-                            editText.setText("");
-                            findViewById(R.id.button7).setVisibility(View.GONE);
-                            findViewById(R.id.button8).setVisibility(View.GONE);
-                            findViewById(R.id.editText).setVisibility(View.GONE);
-                            findViewById(R.id.textView).setVisibility(View.GONE);
+                        for (String tag: tagList) {
+                            spinnerArray.add(tag);
                         }
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                                view.getContext(), android.R.layout.simple_spinner_item, spinnerArray);
+
+                        tagSelect.setAdapter(adapter);
+
+                        radioTextInput.setChecked(true);
+                        //select text input, and deselect tag select by menu
+                        radioTextInput.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                textInput.setFocusable(true);
+                                textInput.setEnabled(true);
+                                textInput.setCursorVisible(true);
+                                tagSelect.setEnabled(false);
+                                radioTextInput.setChecked(true);
+                                radioTextInput2.setChecked(false);
+                            }
+                        });
+
+                        radioTextInput2.setChecked(false);
+                        //selects menu tag selection, and deselect text input
+                        radioTextInput2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                textInput.setFocusable(false);
+                                textInput.setEnabled(false);
+                                textInput.setCursorVisible(false);
+                                tagSelect.setEnabled(true);
+                                radioTextInput2.setChecked(true);
+                                radioTextInput.setChecked(false);
+                            }
+                        });
+
+                        Button dialogCancel = (Button) dialog.findViewById(R.id.button10);
+                        // if button is clicked, close the custom dialog
+                        dialogCancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+
+                                dialog.dismiss();
+                            }
+                        });
+
+
+                        Button dialogButton = (Button) dialog.findViewById(R.id.button9);
+                        // if button is clicked, accept input and close the custom dialog
+                        dialogButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    Log.i("confirmAddTagsButton", "Clicked");
+
+                                    Editable input = textInput.getText();
+                                    String inputString = radioTextInput.isChecked() ? input.toString() : tagSelect.getSelectedItem().toString();
+                                    if(inputString != "") {
+                                        File jpgFile = new File(currentFile);
+                                        if(!jpgFile.exists()){
+                                            Log.e("tag write", "Jpg doesn't exist");
+                                            return;
+                                        }
+
+                                        ExifInterface exif = new ExifInterface(jpgFile.getAbsolutePath());
+
+                                        JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
+                                        Log.e("JSON", json.toString());
+                                        Vector<String> currentTags = new Vector<>();
+                                        for(int i=0; i < json.length(); i++) {
+                                            String entry = json.get(i).toString();
+                                            currentTags.add(entry);
+                                        }
+                                        if(!currentTags.contains(inputString))
+                                            currentTags.add(inputString);
+                                        JSONArray jsonOut = new JSONArray(currentTags);
+
+                                        exif.setAttribute(ExifInterface.TAG_USER_COMMENT, jsonOut.toString());
+                                        exif.saveAttributes();
+
+                                        Log.e("tag_write", "Inserted tag id = "
+                                                + inputString + " into " + jpgFile.getName());
+
+                                        refreshTags();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialog.show();
+
+
+
+                        //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                        //drawer.closeDrawer(GravityCompat.START);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -266,9 +338,10 @@ public class ViewActivity extends AppCompatActivity
             tagView.removeAllTags();
 
             ExifInterface exif = new ExifInterface(jpgFile.getAbsolutePath());
+            Log.e("tag_read", exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
             JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
             for(int i=0; i < json.length(); i++) {
-                Tag tag = new Tag((String)json.get(i));
+                Tag tag = new Tag((String)json.get(i).toString());
                 tag.tagTextColor = Color.parseColor("#000000");
                 tag.layoutColor = Color.parseColor("#FFFFFF");
                 tag.layoutColorPress = Color.parseColor("#000000");
@@ -303,6 +376,68 @@ public class ViewActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    /**
+     * Shows OK/Cancel confirmation dialog about camera permission.
+     */
+    public static class ConfirmationDialog extends DialogFragment {
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final EditText taskEditText = new EditText(getContext());
+            return new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.add_tag)
+                    .setView(taskEditText)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                Log.i("confirmAddTagsButton", "Clicked");
+                                ViewActivity viewActivity = (ViewActivity)getActivity();
+                                Editable input = taskEditText.getText();
+                                if(input.toString() != "") {
+                                    File jpgFile = new File(viewActivity.getCurrentFile());
+                                    if(!jpgFile.exists()){
+                                        Log.e("tag write", "Jpg doesn't exist");
+                                        return;
+                                    }
+
+                                    ExifInterface exif = new ExifInterface(jpgFile.getAbsolutePath());
+
+                                    JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
+                                    Log.e("JSON", json.toString());
+                                    Vector<String> currentTags = new Vector<>();
+                                    for(int i=0; i < json.length(); i++) {
+                                        String entry = json.get(i).toString();
+                                        currentTags.add(entry);
+                                    }
+                                    currentTags.add(input.toString());
+                                    JSONArray jsonOut = new JSONArray(currentTags);
+
+                                    exif.setAttribute(ExifInterface.TAG_USER_COMMENT, jsonOut.toString());
+                                    exif.saveAttributes();
+
+                                    Toast.makeText(getContext(), "Inserted tag id = "
+                                            + input.toString() + " into " + jpgFile.getName(), Toast.LENGTH_SHORT).show();
+
+                                    viewActivity.refreshTags();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                    .create();
         }
     }
 }
