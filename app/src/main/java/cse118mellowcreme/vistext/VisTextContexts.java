@@ -143,10 +143,17 @@ public class VisTextContexts {
             for(Pair<String, Double> prediction : rawPredictions) {
                 if(prediction.second > 0.5f) {
                     VisTextApp app = (VisTextApp)currentActivity.getApplication();
-                    tagList.add(app.getTagMaps().getTag(prediction.first));
+                    String result = app.getTagMaps().getTag(prediction.first);
+
+                    if(result != null)
+                        if(!result.equals("") || !result.equals("null")) {
+                            tagList.add(result);
+                        }
                 }
             }
-            Log.i("Last Tag Data Read", tagList.toString());
+            tagList.remove(tagList.size() - 1);
+            Log.i("Last Tag Data Read", tagList.toString() + "# of els: " + tagList.size());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
