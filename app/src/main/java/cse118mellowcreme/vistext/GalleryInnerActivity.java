@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,6 +104,26 @@ public class GalleryInnerActivity extends AppCompatActivity {
                 openDialog();
             }
         });
+
+        SearchView searchBar = (SearchView) findViewById(R.id.searchBar);
+        searchBar.setIconifiedByDefault(false);
+        searchBar.setQueryHint("Search tags");
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+           public boolean onQueryTextChange(String newText) {
+
+               // what happens when the user types stuff
+
+               return false;
+           }
+
+           public boolean onQueryTextSubmit(String query) {
+
+                // what happens when the user clicks submit
+
+               return false;
+           }
+        });
+
     }
 
     public void openDialog() {

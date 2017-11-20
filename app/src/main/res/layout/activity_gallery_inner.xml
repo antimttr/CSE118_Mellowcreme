@@ -17,8 +17,8 @@
         app:layout_constraintTop_toBottomOf="@+id/gridView2"
         app:srcCompat="@drawable/ic_launcher" />
 
-    <EditText
-        android:id="@+id/editText2"
+    <SearchView
+        android:id="@+id/searchBar"
         android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="11dp"
@@ -26,7 +26,6 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Type to Search"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -42,7 +41,7 @@
         android:stretchMode="columnWidth"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/imageButton3"
-        app:layout_constraintTop_toBottomOf="@+id/spinner"
+        app:layout_constraintTop_toBottomOf="@+id/searchBar"
         android:background="@android:color/holo_orange_dark"/>
 
     <TextView
@@ -56,7 +55,7 @@
         app:layout_constraintBottom_toTopOf="@+id/sortButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
+        app:layout_constraintTop_toBottomOf="@+id/searchBar" />
 
     <Button
         android:id="@+id/sortButton"
@@ -65,8 +64,8 @@
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="14dp"
         android:text="Sort By:"
-        app:layout_constraintStart_toEndOf="@+id/editText2"
-        app:layout_constraintBottom_toBottomOf="@+id/editText2" />
+        app:layout_constraintStart_toEndOf="@+id/searchBar" />
+
 
     <Spinner
         android:id="@+id/spinner"
