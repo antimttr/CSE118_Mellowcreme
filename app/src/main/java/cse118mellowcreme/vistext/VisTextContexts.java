@@ -181,11 +181,13 @@ public class VisTextContexts {
             List<ClarifaiOutput<Concept>> results = request.executeSync().get();
             
             // access probabilities and add concepts (tags from Clarifai) to tag map as needed
-            if (Clarifai prediction [outputs->data->concepts->value] > 0.5f) {
-              VisTextApp app = (VisTextApp)currentActivity.getApplication();
-              tagList.add(app.getTagMaps().getTag(Clarifai concept [outputs->data->concepts->name]));
+            for (each concept in concepts) {
+              if (Clarifai prediction [outputs->data->concepts->value] > 0.5f) {
+                VisTextApp app = (VisTextApp)currentActivity.getApplication();
+                tagList.add(app.getTagMaps().getTag(Clarifai concept [outputs->data->concepts->name]));
+              }
             }
-                
+            
             */
 
             Log.i("Last Tag Data Read", tagList.toString());
