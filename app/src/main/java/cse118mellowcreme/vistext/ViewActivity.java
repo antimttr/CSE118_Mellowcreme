@@ -2,6 +2,7 @@ package cse118mellowcreme.vistext;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,9 +18,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +35,8 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 import org.json.JSONArray;
 
 import java.io.File;
@@ -92,6 +98,28 @@ public class ViewActivity extends AppCompatActivity
 
         //tag view start
         View headerLayout = navigationView.getHeaderView(0);
+
+        //starts facebook image upload process if pressed
+        ImageButton uploadToFacebook = (ImageButton) headerLayout.findViewById(R.id.startFB);
+        uploadToFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Log.i("fb_login", "login acitivity called.");
+                    if (AccessToken.getCurrentAccessToken() == null) {
+                        Intent loginIntent = new Intent(ViewActivity.this, FacebookLoginActivity.class);
+                        startActivity(loginIntent);
+                    } else {
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+
         tagView = (TagView) headerLayout.findViewById(R.id.tagview);
         //SET LISTENER
         tagView.setOnTagClickListener(new OnTagClickListener() {
@@ -280,6 +308,8 @@ public class ViewActivity extends AppCompatActivity
                     }
                 }
             });
+
+
 
         } catch (Exception e) {
             e.printStackTrace();

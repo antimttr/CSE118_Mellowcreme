@@ -4,10 +4,11 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-
+    <uses-permission android:name="android.permission.INTERNET" >
+    </uses-permission>
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,15 @@
         android:label="@string/app_name"
         android:theme="@style/MaterialTheme"
         android:name="VisTextApp">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/app_id">
+        </meta-data>
+        <activity android:name="com.facebook.FacebookActivity"
+                  android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                  android:label="@string/app_name" />
+        <activity android:name=".FacebookLoginActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"/>
         <activity
             android:name=".VisTextImagerActivity"
             android:label="@string/app_name">
@@ -30,6 +40,9 @@
             android:theme="@style/AppTheme.NoActionBar"
             />
         <activity android:name=".GalleryInnerActivity"></activity>
+        <provider android:authorities="com.facebook.app.FacebookContentProvider1969718673301849"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true" />
     </application>
 
 

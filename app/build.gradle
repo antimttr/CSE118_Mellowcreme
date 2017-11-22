@@ -18,11 +18,13 @@ android {
         }
     }
 }
-
+repositories {
+    mavenCentral()
+}
 dependencies {
     implementation 'com.android.support:design:24.2.1'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -31,4 +33,11 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
     compile project(':library')
+    implementation project(':facebook-login')
+    implementation project(':facebook-core')
+    implementation project(':facebook-share')
+    // Facebook Share only
+    compile 'com.facebook.android:facebook-share:4.28.0'
+    // Facebook SDK Core only (Analytics)
+    compile 'com.facebook.android:facebook-core:4.28.0'
 }

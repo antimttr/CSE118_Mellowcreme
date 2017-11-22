@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_id">1969718673301849</string>
     <string name="app_name">VisText</string>
     <string name="picture">Picture</string>
     <string name="gallery">Gallery</string>
