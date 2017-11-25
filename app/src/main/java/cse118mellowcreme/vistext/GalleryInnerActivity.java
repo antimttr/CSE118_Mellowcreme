@@ -12,8 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +24,7 @@ import org.json.JSONArray;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -169,6 +172,12 @@ public class GalleryInnerActivity extends AppCompatActivity {
            public boolean onQueryTextChange(String newText) {
 
                // what happens when the user types stuff
+               ListView list;
+               ListAdapter adapter;
+               ArrayList<String> arra = new ArrayList<String>();
+               String[] animalNameList;
+               animalNameList = new String[]{"Lion","Tiger","Dog"};
+
 
                return false;
            }
