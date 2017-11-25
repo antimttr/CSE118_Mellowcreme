@@ -1,18 +1,25 @@
 package cse118mellowcreme.vistext;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.ExifInterface;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import static java.security.AccessController.getContext;
 
@@ -31,6 +39,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 
 public class GalleryInnerActivity extends AppCompatActivity {
 
@@ -155,7 +166,63 @@ public class GalleryInnerActivity extends AppCompatActivity {
 
             gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
-                    //todo: longclick handler
+                    final Dialog dialog = new Dialog(v.getContext());
+                    Log.i("item_button", "long click sent");
+                    // custom dialog
+                    v.getRootView().setClipToOutline(true);
+                    dialog.setContentView(R.layout.galleryinner_item_action_dialog);
+                    dialog.setTitle("Item Menu");
+                    final int pos = position;
+
+                    //starts facebook image upload process if pressed
+                    ImageButton facebookPost = (ImageButton) dialog.findViewById(R.id.imageButton4);
+                    facebookPost.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                if (AccessToken.getCurrentAccessToken() == null) {
+                                    Intent loginIntent = new Intent(GalleryInnerActivity.this, FacebookLoginActivity.class);
+                                    startActivity(loginIntent);
+                                } else {
+                                    Intent uploadIntent = new Intent(GalleryInnerActivity.this, FacebookUploadActivity.class);
+                                    uploadIntent.putExtra("file", pictures.get(pos).getAbsolutePath());
+                                    startActivity(uploadIntent);
+
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    //deletes the item from the file system if pressed
+                    ImageButton deleteItem = (ImageButton) dialog.findViewById(R.id.imageButton5);
+                    deleteItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    //deletes the item from the file system if pressed
+                    ImageButton renameItem = (ImageButton) dialog.findViewById(R.id.imageButton6);
+                    deleteItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    dialog.show();
                     return true;
                 }
             });
@@ -177,6 +244,35 @@ public class GalleryInnerActivity extends AppCompatActivity {
         dialog.show();
     }
 
+
+    /**
+     * Shows OK/Cancel confirmation dialog about camera permission.
+     */
+    public static class ConfirmationDialog extends DialogFragment {
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final EditText taskEditText = new EditText(getContext());
+            return new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.add_tag)
+                    .setView(taskEditText)
+                    .setCancelable(true)
+                    /*.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })*/
+                    .create();
+        }
+    }
 
 }
 

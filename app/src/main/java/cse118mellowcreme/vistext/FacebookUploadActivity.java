@@ -1,6 +1,7 @@
 package cse118mellowcreme.vistext;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -137,7 +138,7 @@ public class FacebookUploadActivity extends AppCompatActivity {
 
    public void getPublishPermissions() {
         Collection<String> publishPermissions = new ArrayList<>();
-        publishPermissions. add("publish_actions");
+        publishPermissions.add("publish_actions");
 
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -224,12 +225,22 @@ public class FacebookUploadActivity extends AppCompatActivity {
                     });
 
 
+                    final ProgressDialog nDialog;
+                    nDialog = new ProgressDialog(FacebookUploadActivity.this);
+                    nDialog.setMessage("Uploading Image..");
+                    nDialog.setTitle("Facebook upload");
+                    nDialog.setIndeterminate(false);
+                    nDialog.setCancelable(false);
+
+
                     //starts facebook image upload process if pressed
-                    ImageButton uploadToFacebook = (ImageButton) findViewById(R.id.imageButton2_fb_upload);
+                    final ImageButton uploadToFacebook = (ImageButton) findViewById(R.id.imageButton2_fb_upload);
                     uploadToFacebook.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             try {
+                                uploadToFacebook.setClickable(false);
+                                nDialog.show();
                                 File jpgFile = new File(currentFile);
                                 if(jpgFile.exists()) {
                                     Bitmap image = BitmapFactory.decodeFile(currentFile);
@@ -247,21 +258,30 @@ public class FacebookUploadActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Sharer.Result result) {
                                             Log.d(TAG, "SUCCESS");
-                                            Toast.makeText(FacebookUploadActivity.this, "Image Posted Successfully.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(FacebookUploadActivity.this,
+                                                        "Image Posted Successfully.",
+                                                            Toast.LENGTH_SHORT).show();
+                                            nDialog.dismiss();
                                             finish();
                                         }
 
                                         @Override
                                         public void onCancel() {
                                             Log.d(TAG, "CANCELLED");
-                                            Toast.makeText(FacebookUploadActivity.this, "Image Posting canceled.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(FacebookUploadActivity.this,
+                                                    "Image Posting canceled.",
+                                                    Toast.LENGTH_SHORT).show();
+                                            nDialog.dismiss();
                                             finish();
                                         }
 
                                         @Override
                                         public void onError(FacebookException error) {
                                             Log.d(TAG, error.toString());
-                                            Toast.makeText(FacebookUploadActivity.this, "Image Posting error.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(FacebookUploadActivity.this,
+                                                    "Image Posting error.",
+                                                        Toast.LENGTH_SHORT).show();
+                                            nDialog.dismiss();
                                             finish();
                                         }
                                     });
