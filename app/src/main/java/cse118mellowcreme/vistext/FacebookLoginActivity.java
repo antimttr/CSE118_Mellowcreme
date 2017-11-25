@@ -27,10 +27,17 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 public class FacebookLoginActivity extends Activity {
     private static final String EMAIL = "email";
@@ -56,7 +63,7 @@ public class FacebookLoginActivity extends Activity {
         LoginButton mLoginButton = (LoginButton) findViewById(R.id.login_button);
 
         // Set the initial permissions to request from the user while logging in
-        mLoginButton.setReadPermissions(Arrays.asList(EMAIL, USER_POSTS, USER_PHOTOS, PUBLISH_ACTIONS));
+        mLoginButton.setReadPermissions(Arrays.asList(EMAIL, USER_POSTS));
 
         // Register a callback to respond to the user
         mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {

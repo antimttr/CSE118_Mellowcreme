@@ -110,6 +110,9 @@ public class ViewActivity extends AppCompatActivity
                         Intent loginIntent = new Intent(ViewActivity.this, FacebookLoginActivity.class);
                         startActivity(loginIntent);
                     } else {
+                        Intent uploadIntent = new Intent(ViewActivity.this, FacebookUploadActivity.class);
+                        uploadIntent.putExtra("file", currentFile);
+                        startActivity(uploadIntent);
 
                     }
                 } catch (Exception e) {
@@ -117,6 +120,21 @@ public class ViewActivity extends AppCompatActivity
                 }
             }
         });
+
+        //starts facebook image upload process if pressed
+        ImageButton facebookLogout = (ImageButton) headerLayout.findViewById(R.id.logoutFB);
+        facebookLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Log.i("fb_logout", "facebook logout called.");
+                    LoginManager.getInstance().logOut();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
 
 
 
