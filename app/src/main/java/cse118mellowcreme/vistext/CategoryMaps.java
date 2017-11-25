@@ -67,7 +67,7 @@ public class CategoryMaps {
         categoryTravel.add("passenger");
     }
 
-    private List<String> convertStringToCategory(String categoryStr) {
+    public List<String> convertStringToCategory(String categoryStr) {
         if (categoryStr.equals("Active")) {
             return categoryActive;
         } else if (categoryStr.equals("Entertainment")) {

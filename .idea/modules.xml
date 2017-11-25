@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CSE118_Mellowcreme.iml" filepath="$PROJECT_DIR$/CSE118_Mellowcreme.iml" />
+      <module fileurl="file://C:\Users\MWEST\StudioProjects\VisText\CSE118_Mellowcreme.iml" filepath="C:\Users\MWEST\StudioProjects\VisText\CSE118_Mellowcreme.iml" />
+      <module fileurl="file://$PROJECT_DIR$/VisText.iml" filepath="$PROJECT_DIR$/VisText.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
     </modules>
   </component>
 </project>
