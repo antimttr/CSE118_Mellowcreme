@@ -56,7 +56,8 @@ public class GalleryInnerActivity extends AppCompatActivity {
 
     //navigate through all the pictures in the directory and find the ones with the correct category tags
     private List<File> getPicturesWithContext() {
-        File storage = new File(GalleryInnerActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + "VisText");
+        File storage = new File(GalleryInnerActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                + File.separator + "VisText");
         File[] allPictures = storage.listFiles();
         List<File> galleryPictures = new ArrayList<File>();
 
@@ -88,7 +89,8 @@ public class GalleryInnerActivity extends AppCompatActivity {
      * @return
      */
     private List<File> getPicturesWithTagLabel() {
-        File storage = new File(GalleryInnerActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + "VisText");
+        File storage = new File(GalleryInnerActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                + File.separator + "VisText");
         File[] allPictures = storage.listFiles();
         List<File> galleryPictures = new ArrayList<File>();
 
@@ -230,6 +232,21 @@ public class GalleryInnerActivity extends AppCompatActivity {
 
     }
 
+    private void refreshGallery() {
+        List<File> picPossible = null;
+        if(category != null) {
+            picPossible = getPicturesWithContext();
+        }
+        else if (tagLabel != null) {
+            picPossible = getPicturesWithTagLabel();
+
+            Log.e("tag_label", picPossible.toString());
+        }
+        final List<File> pictures = picPossible;
+
+        updateGallery(pictures);
+    }
+
     private void updateGallery(final List<File> pictures) {
         if(pictures != null) {
 
@@ -243,7 +260,8 @@ public class GalleryInnerActivity extends AppCompatActivity {
 
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                    Toast.makeText(GalleryInnerActivity.this, pictures.get(position).getAbsolutePath(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GalleryInnerActivity.this, pictures.get(position).getAbsolutePath(),
+                            Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(GalleryInnerActivity.this, ViewActivity.class);
                     intent.putExtra("file", pictures.get(position).getAbsolutePath());
                     startActivity(intent);
@@ -267,10 +285,12 @@ public class GalleryInnerActivity extends AppCompatActivity {
                         public void onClick(View view) {
                             try {
                                 if (AccessToken.getCurrentAccessToken() == null) {
-                                    Intent loginIntent = new Intent(GalleryInnerActivity.this, FacebookLoginActivity.class);
+                                    Intent loginIntent = new Intent(GalleryInnerActivity.this,
+                                            FacebookLoginActivity.class);
                                     startActivity(loginIntent);
                                 } else {
-                                    Intent uploadIntent = new Intent(GalleryInnerActivity.this, FacebookUploadActivity.class);
+                                    Intent uploadIntent = new Intent(GalleryInnerActivity.this,
+                                            FacebookUploadActivity.class);
                                     uploadIntent.putExtra("file", pictures.get(pos).getAbsolutePath());
                                     startActivity(uploadIntent);
                                 }
@@ -298,8 +318,42 @@ public class GalleryInnerActivity extends AppCompatActivity {
                     deleteItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            dialog.dismiss();
                             try {
+                                Log.i("delete_dialog", "Shown");
+                                AlertDialog.Builder prompt;
+                                prompt =   new AlertDialog.Builder(view.getContext());
 
+                                prompt.setMessage(R.string.delete_confirm);
+                                prompt.setCancelable(true);
+                                prompt.setPositiveButton(android.R.string.ok,
+                                            new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        File toBeDeleted = new File(pictures.get(pos).getAbsolutePath());
+                                        if(toBeDeleted.exists()) {
+                                            boolean deleted = toBeDeleted.delete();
+                                            if(deleted) {
+                                                Toast.makeText(GalleryInnerActivity.this,
+                                                 "deleted " + pictures.get(pos).getAbsolutePath(),
+                                                     Toast.LENGTH_SHORT).show();
+                                                refreshGallery();
+                                            }
+                                            else
+                                                Toast.makeText(GalleryInnerActivity.this,
+                                                        "deletion failed " + pictures.get(pos).getAbsolutePath(),
+                                                        Toast.LENGTH_SHORT).show();
+                                        }
+                                    }});
+
+                                prompt.setNegativeButton(android.R.string.cancel,
+                                        new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }});
+                                prompt.create();
+                                prompt.show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
