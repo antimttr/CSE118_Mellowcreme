@@ -97,7 +97,7 @@ public class GalleryInnerActivity extends AppCompatActivity {
                     ExifInterface exif = new ExifInterface(image.getAbsolutePath());
                     String tagList = exif.getAttribute(ExifInterface.TAG_USER_COMMENT);
                     if (exif != null && tagList != null && !tagList.equals("") && !tagList.equals("?")) {
-                        Log.e("gallery_inner", tagList);
+                        //Log.e("gallery_inner", tagList);
                         JSONArray json = new JSONArray(tagList);
                         if (hasTag(tagLabel, json)) {
                             galleryPictures.add(image);
@@ -154,86 +154,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
         }
         final List<File> pictures = picPossible;
 
-        if(pictures != null) {
-            //set the picture files in the gallery
-            GridView gridView = (GridView) findViewById(R.id.gridView2);
-            gridView.setAdapter(new ImageAdapter(this, pictures));
+        updateGallery(picPossible);
 
 
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                    Toast.makeText(GalleryInnerActivity.this, pictures.get(position).getAbsolutePath(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(GalleryInnerActivity.this, ViewActivity.class);
-                    intent.putExtra("file", pictures.get(position).getAbsolutePath());
-                    startActivity(intent);
-                }
-            });
-
-            gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
-                    final Dialog dialog = new Dialog(v.getContext());
-                    Log.i("item_button", "long click sent");
-                    // custom dialog
-                    v.getRootView().setClipToOutline(true);
-                    dialog.setContentView(R.layout.galleryinner_item_action_dialog);
-                    dialog.setTitle("Item Menu");
-                    final int pos = position;
-
-                    //starts facebook image upload process if pressed
-                    ImageButton facebookPost = (ImageButton) dialog.findViewById(R.id.imageButton4);
-                    facebookPost.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            try {
-                                if (AccessToken.getCurrentAccessToken() == null) {
-                                    Intent loginIntent = new Intent(GalleryInnerActivity.this, FacebookLoginActivity.class);
-                                    startActivity(loginIntent);
-                                } else {
-                                    Intent uploadIntent = new Intent(GalleryInnerActivity.this, FacebookUploadActivity.class);
-                                    uploadIntent.putExtra("file", pictures.get(pos).getAbsolutePath());
-                                    startActivity(uploadIntent);
-
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-
-                    //deletes the item from the file system if pressed
-                    ImageButton deleteItem = (ImageButton) dialog.findViewById(R.id.imageButton5);
-                    deleteItem.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            try {
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-
-                    //deletes the item from the file system if pressed
-                    ImageButton renameItem = (ImageButton) dialog.findViewById(R.id.imageButton6);
-                    deleteItem.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            try {
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-
-                    dialog.show();
-                    return true;
-                }
-            });
-
-
-        }
         final Button button = (Button)findViewById(R.id.sortButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -305,6 +228,89 @@ public class GalleryInnerActivity extends AppCompatActivity {
            }
         });
 
+    }
+
+    private void updateGallery(final List<File> pictures) {
+        if(pictures != null) {
+
+
+            //set the picture files in the gallery
+            GridView gridView = (GridView) findViewById(R.id.gridView2);
+            //clear previous gridview contents
+            gridView.setAdapter(null);
+
+            gridView.setAdapter(new ImageAdapter(this, pictures));
+
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    Toast.makeText(GalleryInnerActivity.this, pictures.get(position).getAbsolutePath(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(GalleryInnerActivity.this, ViewActivity.class);
+                    intent.putExtra("file", pictures.get(position).getAbsolutePath());
+                    startActivity(intent);
+                }
+            });
+
+            gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+                    final Dialog dialog = new Dialog(v.getContext());
+                    Log.i("item_button", "long click sent");
+                    // custom dialog
+                    v.getRootView().setClipToOutline(true);
+                    dialog.setContentView(R.layout.galleryinner_item_action_dialog);
+                    dialog.setTitle("Item Menu");
+                    final int pos = position;
+
+                    //starts facebook image upload process if pressed
+                    ImageButton facebookPost = (ImageButton) dialog.findViewById(R.id.imageButton4);
+                    facebookPost.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                if (AccessToken.getCurrentAccessToken() == null) {
+                                    Intent loginIntent = new Intent(GalleryInnerActivity.this, FacebookLoginActivity.class);
+                                    startActivity(loginIntent);
+                                } else {
+                                    Intent uploadIntent = new Intent(GalleryInnerActivity.this, FacebookUploadActivity.class);
+                                    uploadIntent.putExtra("file", pictures.get(pos).getAbsolutePath());
+                                    startActivity(uploadIntent);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    //deletes the item from the file system if pressed
+                    ImageButton deleteItem = (ImageButton) dialog.findViewById(R.id.imageButton5);
+                    deleteItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    //deletes the item from the file system if pressed
+                    ImageButton renameItem = (ImageButton) dialog.findViewById(R.id.imageButton6);
+                    deleteItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    dialog.show();
+                    return true;
+                }
+            });
+        }
     }
 
     public void openDialog() {
