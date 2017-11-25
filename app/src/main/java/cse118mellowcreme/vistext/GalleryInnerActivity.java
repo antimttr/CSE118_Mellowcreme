@@ -153,6 +153,14 @@ public class GalleryInnerActivity extends AppCompatActivity {
                 }
             });
 
+            gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+                    //todo: longclick handler
+                    return true;
+                }
+            });
+
+
         }
         final Button button = (Button)findViewById(R.id.sortButton);
         button.setOnClickListener(new View.OnClickListener() {

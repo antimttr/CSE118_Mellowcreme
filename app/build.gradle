@@ -33,11 +33,9 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
     compile project(':library')
-    implementation project(':facebook-login')
-    implementation project(':facebook-core')
-    implementation project(':facebook-share')
-    // Facebook Share only
-    compile 'com.facebook.android:facebook-share:4.28.0'
-    // Facebook SDK Core only (Analytics)
-    compile 'com.facebook.android:facebook-core:4.28.0'
+    //implementation project(':facebook')
+    //implementation project(':facebook-login')
+    //implementation project(':facebook-core')
+    //implementation project(':facebook-share')
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }

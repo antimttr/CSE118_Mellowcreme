@@ -135,7 +135,7 @@ public class FacebookUploadActivity extends AppCompatActivity {
         }
     };
 
-    public void getPublishPermissions() {
+   public void getPublishPermissions() {
         Collection<String> publishPermissions = new ArrayList<>();
         publishPermissions. add("publish_actions");
 
@@ -229,47 +229,47 @@ public class FacebookUploadActivity extends AppCompatActivity {
                     uploadToFacebook.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                        try {
-                            File jpgFile = new File(currentFile);
-                            if(jpgFile.exists()) {
-                                Bitmap image = BitmapFactory.decodeFile(currentFile);
-                                SharePhoto photo = new SharePhoto.Builder()
-                                        .setBitmap(image)
-                                        .setCaption(buildCaption())
-                                        .build();
+                            try {
+                                File jpgFile = new File(currentFile);
+                                if(jpgFile.exists()) {
+                                    Bitmap image = BitmapFactory.decodeFile(currentFile);
+                                    SharePhoto photo = new SharePhoto.Builder()
+                                            .setBitmap(image)
+                                            .setCaption(buildCaption())
+                                            .build();
 
-                                SharePhotoContent content = new SharePhotoContent.Builder()
-                                        .addPhoto(photo)
-                                        .build();
+                                    SharePhotoContent content = new SharePhotoContent.Builder()
+                                            .addPhoto(photo)
+                                            .build();
 
-                                ShareApi.share(content,  new FacebookCallback<Sharer.Result>() {
-                                    String TAG = "facebook_upload";
-                                    @Override
-                                    public void onSuccess(Sharer.Result result) {
-                                        Log.d(TAG, "SUCCESS");
-                                        Toast.makeText(FacebookUploadActivity.this, "Image Posted Successfully.", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
+                                    ShareApi.share(content,  new FacebookCallback<Sharer.Result>() {
+                                        String TAG = "facebook_upload";
+                                        @Override
+                                        public void onSuccess(Sharer.Result result) {
+                                            Log.d(TAG, "SUCCESS");
+                                            Toast.makeText(FacebookUploadActivity.this, "Image Posted Successfully.", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }
 
-                                    @Override
-                                    public void onCancel() {
-                                        Log.d(TAG, "CANCELLED");
-                                        Toast.makeText(FacebookUploadActivity.this, "Image Posting canceled.", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
+                                        @Override
+                                        public void onCancel() {
+                                            Log.d(TAG, "CANCELLED");
+                                            Toast.makeText(FacebookUploadActivity.this, "Image Posting canceled.", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }
 
-                                    @Override
-                                    public void onError(FacebookException error) {
-                                        Log.d(TAG, error.toString());
-                                        Toast.makeText(FacebookUploadActivity.this, "Image Posting error.", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
-                                });
+                                        @Override
+                                        public void onError(FacebookException error) {
+                                            Log.d(TAG, error.toString());
+                                            Toast.makeText(FacebookUploadActivity.this, "Image Posting error.", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }
+                                    });
 
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                         }
                     });
 
@@ -302,35 +302,35 @@ public class FacebookUploadActivity extends AppCompatActivity {
         String tagText = tag.text;
         tagView.removeAllTags();
         try {
-        for (int i = 0; i < json.length(); i++) {
-            Tag newTag = new Tag((String) json.get(i).toString());
+            for (int i = 0; i < json.length(); i++) {
+                Tag newTag = new Tag((String) json.get(i).toString());
 
-            //or tag.background = this.getResources().getDrawable(R.drawable.custom_bg);
-            newTag.radius = 20f;
-            newTag.tagTextSize = 14f;
-            newTag.layoutBorderSize = 1f;
-            newTag.layoutBorderColor = Color.parseColor("#555555");
-            newTag.isDeletable = false;
+                //or tag.background = this.getResources().getDrawable(R.drawable.custom_bg);
+                newTag.radius = 20f;
+                newTag.tagTextSize = 14f;
+                newTag.layoutBorderSize = 1f;
+                newTag.layoutBorderColor = Color.parseColor("#555555");
+                newTag.isDeletable = false;
 
-            if(newTag.text.equals(tagText)) {
-                if(tagSelected.get(i))
-                    tagSelected.set(i, false);
-                else
-                    tagSelected.set(i, true);
+                if(newTag.text.equals(tagText)) {
+                    if(tagSelected.get(i))
+                        tagSelected.set(i, false);
+                    else
+                        tagSelected.set(i, true);
+                }
+
+                if (tagSelected.get(i)) {
+                    newTag.tagTextColor = Color.parseColor("#FFFFFF");
+                    newTag.layoutColor = Color.parseColor("#000000");
+                    newTag.layoutColorPress = Color.parseColor("#FFFFFF");
+                } else {
+                    newTag.tagTextColor = Color.parseColor("#000000");
+                    newTag.layoutColor = Color.parseColor("#FFFFFF");
+                    newTag.layoutColorPress = Color.parseColor("#000000");
+                }
+
+                tagView.addTag(newTag);
             }
-
-            if (tagSelected.get(i)) {
-                newTag.tagTextColor = Color.parseColor("#FFFFFF");
-                newTag.layoutColor = Color.parseColor("#000000");
-                newTag.layoutColorPress = Color.parseColor("#FFFFFF");
-            } else {
-                newTag.tagTextColor = Color.parseColor("#000000");
-                newTag.layoutColor = Color.parseColor("#FFFFFF");
-                newTag.layoutColorPress = Color.parseColor("#000000");
-            }
-
-            tagView.addTag(newTag);
-        }
 
         } catch (Exception e) {
             e.printStackTrace();
