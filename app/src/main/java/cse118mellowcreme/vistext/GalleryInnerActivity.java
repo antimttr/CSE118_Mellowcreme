@@ -209,6 +209,13 @@ public class GalleryInnerActivity extends AppCompatActivity {
 
                    adapter = new ListViewAdapter(GalleryInnerActivity.this, searchBarList);
                    list.setAdapter(adapter);
+                    list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        }
+                    });
                    adapter.filter(newText);
 
                }
