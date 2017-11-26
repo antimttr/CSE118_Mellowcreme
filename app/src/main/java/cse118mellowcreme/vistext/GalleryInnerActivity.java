@@ -84,68 +84,11 @@ public class GalleryInnerActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
-        //sort list based on sortBy parameter
-        if(sortBy.equals(getResources().getString(R.string.sortby_nameup)))
-            Collections.sort(galleryPictures, new Comparator<File>(){
-                public int compare(File obj1, File obj2) {
-                    // ## Ascending order
-                    return obj1.getName().compareToIgnoreCase(obj2.getName()); // To compare string values
-                }
-            });
-        else if(sortBy.equals(getResources().getString(R.string.sortby_namedown)))
-            Collections.sort(galleryPictures, new Comparator<File>(){
-                public int compare(File obj1, File obj2) {
-                    // ## Descending order
-                     return obj2.getName().compareToIgnoreCase(obj1.getName()); // To compare string values
-                }
-            });
-        else if(sortBy.equals(getResources().getString(R.string.sortby_dateup)))
-            Collections.sort(galleryPictures, new Comparator<File>(){
-                public int compare(File obj1, File obj2) {
-                    // ## Ascending order
-                     return Long.valueOf(obj1.lastModified()).compareTo(obj2.lastModified()); // To compare integer values
-
-                }
-            });
-        else if(sortBy.equals(getResources().getString(R.string.sortby_datedown)))
-            Collections.sort(galleryPictures, new Comparator<File>(){
-                public int compare(File obj1, File obj2) {
-                    // ## Descending order
-                    return Long.valueOf(obj2.lastModified()).compareTo(obj1.lastModified());
-                }
-            });
         //add the picture or something to a list to show in the gallery
-        return galleryPictures;
+        return sort(galleryPictures);
     }
 
-    /**
-     * Navigate through all the pictures in the directory and find the ones with the correct tags
-     * @return
-     */
-    private List<File> getPicturesWithTagLabel() {
-        File storage = new File(GalleryInnerActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                + File.separator + "VisText");
-        File[] allPictures = storage.listFiles();
-        List<File> galleryPictures = new ArrayList<File>();
-
-        for (File image : allPictures) {
-            try {
-                    ExifInterface exif = new ExifInterface(image.getAbsolutePath());
-                    String tagList = exif.getAttribute(ExifInterface.TAG_USER_COMMENT);
-                    if (exif != null && tagList != null && !tagList.equals("") && !tagList.equals("?")) {
-                        //Log.e("gallery_inner", tagList);
-                        JSONArray json = new JSONArray(tagList);
-                        if (hasTag(tagLabel, json)) {
-                            galleryPictures.add(image);
-                        }
-                    }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
+    private List<File> sort(List<File> galleryPictures) {
         //sort list based on sortBy parameter
         if(sortBy.equals(getResources().getString(R.string.sortby_nameup)))
             Collections.sort(galleryPictures, new Comparator<File>(){
@@ -176,8 +119,39 @@ public class GalleryInnerActivity extends AppCompatActivity {
                     return Long.valueOf(obj2.lastModified()).compareTo(obj1.lastModified());
                 }
             });
-        //add the picture or something to a list to show in the gallery
         return galleryPictures;
+    }
+
+
+    /**
+     * Navigate through all the pictures in the directory and find the ones with the correct tags
+     * @return
+     */
+    private List<File> getPicturesWithTagLabel() {
+        File storage = new File(GalleryInnerActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                + File.separator + "VisText");
+        File[] allPictures = storage.listFiles();
+        List<File> galleryPictures = new ArrayList<File>();
+
+        for (File image : allPictures) {
+            try {
+                    ExifInterface exif = new ExifInterface(image.getAbsolutePath());
+                    String tagList = exif.getAttribute(ExifInterface.TAG_USER_COMMENT);
+                    if (exif != null && tagList != null && !tagList.equals("") && !tagList.equals("?")) {
+                        //Log.e("gallery_inner", tagList);
+                        JSONArray json = new JSONArray(tagList);
+                        if (hasTag(tagLabel, json)) {
+                            galleryPictures.add(image);
+                        }
+                    }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        //add the picture or something to a list to show in the gallery
+        return sort(galleryPictures);
     }
 
     public boolean hasTag(String tagStr, JSONArray labels) {
