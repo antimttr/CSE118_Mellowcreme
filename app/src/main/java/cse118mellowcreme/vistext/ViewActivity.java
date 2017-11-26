@@ -374,8 +374,12 @@ public class ViewActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        File jpgFile = new File(currentFile);
 
-
+        //end this activity if the file was deleted or renamed.
+        if(!jpgFile.exists()) {
+            finish();
+        }
     }
 
     @Override
