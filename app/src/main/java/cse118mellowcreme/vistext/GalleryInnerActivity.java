@@ -53,6 +53,7 @@ public class GalleryInnerActivity extends AppCompatActivity {
     private String category;
     private String tagLabel;
     private CategoryMaps categoryMap;
+    private String sortBy;
 
     //navigate through all the pictures in the directory and find the ones with the correct category tags
     private List<File> getPicturesWithContext() {
@@ -159,21 +160,21 @@ public class GalleryInnerActivity extends AppCompatActivity {
         updateGallery(picPossible);
 
 
-        final Button button = (Button)findViewById(R.id.sortButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        final Button sortButton = (Button)findViewById(R.id.sortButton);
+        sortButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 openDialog();
             }
         });
 
-        SearchView searchBar = (SearchView) findViewById(R.id.searchBar);
+        final SearchView searchBar = (SearchView) findViewById(R.id.searchBar);
         searchBar.setIconifiedByDefault(false);
         searchBar.setQueryHint("Search tags");
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
            public boolean onQueryTextChange(String newText) {
 
-               ListView list = (ListView) findViewById(R.id.searchList);
-               ArrayList<String> searchBarList = new ArrayList<String>();
+               final ListView list = (ListView) findViewById(R.id.searchList);
+               final ArrayList<String> searchBarList = new ArrayList<String>();
                ListViewAdapter adapter;
 
                //when user erases all the text, clear the list view of options
@@ -182,6 +183,10 @@ public class GalleryInnerActivity extends AppCompatActivity {
                    adapter = new ListViewAdapter(GalleryInnerActivity.this, searchBarList);
                    list.setAdapter(adapter);
                    adapter.filter(newText);
+
+                   // Reset the gallery to have everything inside it
+                   category = "All";
+                   refreshGallery();
                } else {
 
                    // what happens when the user types stuff
@@ -213,7 +218,13 @@ public class GalleryInnerActivity extends AppCompatActivity {
 
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                            // Get the string value of the item clicked and submit the search
+                            String clickedItem = (String) parent.getItemAtPosition(position);
+                            searchBar.setQuery(clickedItem, true);
+                            // Reset the searchBar
+                            searchBarList.clear();
+                            ListViewAdapter adapter = new ListViewAdapter(GalleryInnerActivity.this, searchBarList);
+                            list.setAdapter(adapter);
                         }
                     });
                    adapter.filter(newText);
@@ -222,12 +233,17 @@ public class GalleryInnerActivity extends AppCompatActivity {
                return false;
            }
 
+
+           // Update the gallery when the user hits 'search'
            public boolean onQueryTextSubmit(String query) {
-
-                // what happens when the user clicks submit
-
-               return false;
+                System.out.println(query);
+                // set category to null else refresh gallery will search by category
+                category = null;
+                tagLabel = query;
+                refreshGallery();
+               return true;
            }
+
         });
 
     }
@@ -372,7 +388,43 @@ public class GalleryInnerActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.sort_dialog);
         dialog.setTitle("Sort By");
         dialog.show();
+
+        final Button buttonNameUp = (Button)dialog.findViewById(R.id.dialog_NameUp);
+        buttonNameUp.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                System.out.println("Sort by NameUp clicked");
+                sortBy = "NameUp";
+            }
+        });
+
+        final Button buttonNameDown = (Button)dialog.findViewById(R.id.dialog_NameDown);
+        buttonNameDown.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                System.out.println("Sort by NameDown clicked");
+                sortBy = "NameDown";
+            }
+        });
+
+        final Button buttonDateUp = (Button)dialog.findViewById(R.id.dialog_DateUp);
+        buttonDateUp.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                System.out.println("Sort by DateUp clicked");
+                sortBy = "DateUp";
+            }
+        });
+
+        final Button buttonDateDown = (Button)dialog.findViewById(R.id.dialog_DateDown);
+        buttonDateDown.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                System.out.println("Sort by DateDown licked");
+                sortBy = "DateDown";
+            }
+        });
+
     }
+    // Get the directory that has the photos
+    //File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + "VisText");
+
 
 
     /**
