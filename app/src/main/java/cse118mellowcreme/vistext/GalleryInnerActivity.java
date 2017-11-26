@@ -36,6 +36,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
@@ -83,6 +85,36 @@ public class GalleryInnerActivity extends AppCompatActivity {
             }
         }
 
+        //sort list based on sortBy parameter
+        if(sortBy.equals(getResources().getString(R.string.sortby_nameup)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Ascending order
+                    return obj1.getName().compareToIgnoreCase(obj2.getName()); // To compare string values
+                }
+            });
+        else if(sortBy.equals(getResources().getString(R.string.sortby_namedown)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Descending order
+                     return obj2.getName().compareToIgnoreCase(obj1.getName()); // To compare string values
+                }
+            });
+        else if(sortBy.equals(getResources().getString(R.string.sortby_dateup)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Ascending order
+                     return Long.valueOf(obj1.lastModified()).compareTo(obj2.lastModified()); // To compare integer values
+
+                }
+            });
+        else if(sortBy.equals(getResources().getString(R.string.sortby_datedown)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Descending order
+                    return Long.valueOf(obj2.lastModified()).compareTo(obj1.lastModified());
+                }
+            });
         //add the picture or something to a list to show in the gallery
         return galleryPictures;
     }
@@ -114,6 +146,36 @@ public class GalleryInnerActivity extends AppCompatActivity {
             }
         }
 
+        //sort list based on sortBy parameter
+        if(sortBy.equals(getResources().getString(R.string.sortby_nameup)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Ascending order
+                    return obj1.getName().compareToIgnoreCase(obj2.getName()); // To compare string values
+                }
+            });
+        else if(sortBy.equals(getResources().getString(R.string.sortby_namedown)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Descending order
+                    return obj2.getName().compareToIgnoreCase(obj1.getName()); // To compare string values
+                }
+            });
+        else if(sortBy.equals(getResources().getString(R.string.sortby_dateup)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Ascending order
+                    return Long.valueOf(obj1.lastModified()).compareTo(obj2.lastModified()); // To compare integer values
+
+                }
+            });
+        else if(sortBy.equals(getResources().getString(R.string.sortby_datedown)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Descending order
+                    return Long.valueOf(obj2.lastModified()).compareTo(obj1.lastModified());
+                }
+            });
         //add the picture or something to a list to show in the gallery
         return galleryPictures;
     }
@@ -139,6 +201,7 @@ public class GalleryInnerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_inner);
 
+        sortBy = "nameUp";
         categoryMap = new CategoryMaps();
         categoryMap.buildCategories();
 
@@ -453,7 +516,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
         buttonNameUp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 System.out.println("Sort by NameUp clicked");
-                sortBy = "NameUp";
+                sortBy = getResources().getString(R.string.sortby_nameup);
+                dialog.dismiss();
+                refreshGallery();
             }
         });
 
@@ -461,7 +526,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
         buttonNameDown.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 System.out.println("Sort by NameDown clicked");
-                sortBy = "NameDown";
+                sortBy = getResources().getString(R.string.sortby_namedown);
+                dialog.dismiss();
+                refreshGallery();
             }
         });
 
@@ -469,7 +536,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
         buttonDateUp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 System.out.println("Sort by DateUp clicked");
-                sortBy = "DateUp";
+                sortBy = getResources().getString(R.string.sortby_dateup);
+                dialog.dismiss();
+                refreshGallery();
             }
         });
 
@@ -477,7 +546,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
         buttonDateDown.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 System.out.println("Sort by DateDown licked");
-                sortBy = "DateDown";
+                sortBy = getResources().getString(R.string.sortby_datedown);
+                dialog.dismiss();
+                refreshGallery();
             }
         });
 
