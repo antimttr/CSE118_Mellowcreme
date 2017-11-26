@@ -31,6 +31,7 @@
         <ImageButton
             android:id="@+id/startFB"
             android:layout_width="48dp"
+            android:background="@null"
             android:layout_height="49dp"
             android:layout_margin="10dp"
             android:layout_marginLeft="0dp"
@@ -41,6 +42,7 @@
 
         <ImageButton
             android:id="@+id/logoutFB"
+            android:background="@null"
             android:layout_width="48dp"
             android:layout_height="49dp"
             android:layout_margin="10dp"
