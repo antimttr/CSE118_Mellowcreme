@@ -263,8 +263,6 @@ public class ViewActivity extends AppCompatActivity
                         dialogCancel.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
-
                                 dialog.dismiss();
                             }
                         });

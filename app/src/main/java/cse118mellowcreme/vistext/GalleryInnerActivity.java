@@ -16,6 +16,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -283,6 +285,7 @@ public class GalleryInnerActivity extends AppCompatActivity {
                     facebookPost.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            dialog.dismiss();
                             try {
                                 if (AccessToken.getCurrentAccessToken() == null) {
                                     Intent loginIntent = new Intent(GalleryInnerActivity.this,
@@ -300,13 +303,68 @@ public class GalleryInnerActivity extends AppCompatActivity {
                         }
                     });
 
-                    //deletes the item from the file system if pressed
-                    ImageButton deleteItem = (ImageButton) dialog.findViewById(R.id.imageButton5);
-                    deleteItem.setOnClickListener(new View.OnClickListener() {
+                    //prompts the user to rename a file if pressed
+                    ImageButton renameItem = (ImageButton) dialog.findViewById(R.id.imageButton6);
+                    renameItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            try {
+                            dialog.dismiss();
+                            final EditText taskEditText = new EditText(view.getContext());
+                            String path = pictures.get(pos).getName();
+                            path = path.substring(0, path.lastIndexOf("."));
+                            taskEditText.setSelectAllOnFocus(true);
+                            taskEditText.setText(path);
 
+                            final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                            try {
+                                AlertDialog.Builder prompt = new AlertDialog.Builder(view.getContext());
+                                prompt.setMessage(R.string.rename_file);
+                                prompt.setView(taskEditText);
+                                prompt.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        imm.hideSoftInputFromInputMethod(getCurrentFocus().getRootView().getWindowToken(), 0);
+                                        try {
+                                            Log.i("confirmAddTagsButton", "Clicked");
+                                            Editable input = taskEditText.getText();
+                                            if(input.toString() != "") {
+                                                Log.i("rename_file", "File rename started");
+                                                File jpgFile = new File(pictures.get(pos).getAbsolutePath());
+                                                if (jpgFile.exists()) {
+                                                    File renamedFile = new File(jpgFile.getAbsolutePath().substring(0,
+                                                            jpgFile.getAbsolutePath().lastIndexOf("/"))
+                                                            + "/" + input.toString().trim() + ".jpg");
+                                                    boolean result = jpgFile.renameTo(renamedFile);
+                                                    if(result) {
+                                                        Log.i("rename_file", "File Renamed");
+                                                        Toast.makeText(GalleryInnerActivity.this,
+                                                                "renamed to: " + renamedFile.getName(),
+                                                                Toast.LENGTH_SHORT).show();
+                                                        refreshGallery();
+                                                    } else {
+                                                        Log.e("rename_file", "File Rename failed");
+                                                        Toast.makeText(GalleryInnerActivity.this,
+                                                                "rename failed",
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+
+                                            }
+                                            } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                prompt.setNegativeButton(android.R.string.cancel,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            imm.hideSoftInputFromInputMethod(getCurrentFocus().getRootView().getWindowToken(), 0);
+                                        }
+                                    })
+                                        .create();
+                                prompt.show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -314,7 +372,7 @@ public class GalleryInnerActivity extends AppCompatActivity {
                     });
 
                     //deletes the item from the file system if pressed
-                    ImageButton renameItem = (ImageButton) dialog.findViewById(R.id.imageButton6);
+                    ImageButton deleteItem = (ImageButton) dialog.findViewById(R.id.imageButton5);
                     deleteItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -334,12 +392,14 @@ public class GalleryInnerActivity extends AppCompatActivity {
                                         if(toBeDeleted.exists()) {
                                             boolean deleted = toBeDeleted.delete();
                                             if(deleted) {
+                                                Log.i("delete_file", "File Deleted");
                                                 Toast.makeText(GalleryInnerActivity.this,
                                                  "deleted " + pictures.get(pos).getAbsolutePath(),
                                                      Toast.LENGTH_SHORT).show();
                                                 refreshGallery();
                                             }
                                             else
+                                                Log.i("delete_file", "File Delete faile");
                                                 Toast.makeText(GalleryInnerActivity.this,
                                                         "deletion failed " + pictures.get(pos).getAbsolutePath(),
                                                         Toast.LENGTH_SHORT).show();
