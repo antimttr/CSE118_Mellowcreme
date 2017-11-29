@@ -2,6 +2,7 @@ package cse118mellowcreme.vistext;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,9 +18,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Html;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +36,8 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 import org.json.JSONArray;
 
 import java.io.File;
@@ -92,6 +99,69 @@ public class ViewActivity extends AppCompatActivity
 
         //tag view start
         View headerLayout = navigationView.getHeaderView(0);
+
+        //starts facebook image upload process if pressed
+        ImageButton uploadToFacebook = (ImageButton) headerLayout.findViewById(R.id.startFB);
+        uploadToFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Log.i("fb_login", "login acitivity called.");
+                    if (AccessToken.getCurrentAccessToken() == null) {
+                        Intent loginIntent = new Intent(ViewActivity.this, FacebookLoginActivity.class);
+                        startActivity(loginIntent);
+                    } else {
+                        Intent uploadIntent = new Intent(ViewActivity.this, FacebookUploadActivity.class);
+                        uploadIntent.putExtra("file", currentFile);
+                        startActivity(uploadIntent);
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        //starts facebook image upload process if pressed
+        ImageButton facebookLogout = (ImageButton) headerLayout.findViewById(R.id.logoutFB);
+        facebookLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Log.i("fb_logout", "facebook logout called.");
+                        AlertDialog.Builder prompt;
+                        prompt =   new AlertDialog.Builder(view.getContext());
+
+
+                        prompt.setTitle(Html.fromHtml("<font color='#FF7F27'>Are you sure you want to log out of Facebook?</font>"));
+                        prompt.setCancelable(true);
+                        prompt.setPositiveButton(android.R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        LoginManager.getInstance().logOut();
+                                        Toast.makeText(ViewActivity.this,
+                                                "Facebook logout successful.",
+                                                Toast.LENGTH_SHORT).show();
+
+                                    }});
+
+                        prompt.setNegativeButton(android.R.string.cancel,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }});
+                        prompt.create();
+                        prompt.show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+
+
         tagView = (TagView) headerLayout.findViewById(R.id.tagview);
         //SET LISTENER
         tagView.setOnTagClickListener(new OnTagClickListener() {
@@ -217,8 +287,6 @@ public class ViewActivity extends AppCompatActivity
                         dialogCancel.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
-
                                 dialog.dismiss();
                             }
                         });
@@ -281,6 +349,8 @@ public class ViewActivity extends AppCompatActivity
                 }
             });
 
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -304,8 +374,12 @@ public class ViewActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        File jpgFile = new File(currentFile);
 
-
+        //end this activity if the file was deleted or renamed.
+        if(!jpgFile.exists()) {
+            finish();
+        }
     }
 
     @Override

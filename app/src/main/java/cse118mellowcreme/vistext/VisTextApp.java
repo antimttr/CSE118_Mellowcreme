@@ -2,6 +2,9 @@ package cse118mellowcreme.vistext;
 
 import android.app.Application;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
 /**
  * Created by MWEST on 11/3/2017.
  * Application for global object references
@@ -26,5 +29,7 @@ public class VisTextApp extends Application {
         contexts = new VisTextContexts();
         tagMap = new TagMap();
         tagMap.buildMap();
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
     }
 }
