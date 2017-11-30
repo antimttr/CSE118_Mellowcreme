@@ -16,4 +16,28 @@
     <color name="selector_tag_unselected_layout_color_press">#66000000</color>
     <color name="selector_tag_selected_layout_color_press">#66000000</color>
 
+    <!--Color Palette-->
+    <!-- Blues -->
+    <color name="blueDark">#6E7391</color>
+    <color name="blueRegular">#5D6B9A</color>
+    <color name="blueLighter">#7E85AD</color>
+    <color name="blueLightest">#9EA2C1</color>
+
+    <!-- Purples -->
+    <color name="purpleDark">#996E8B</color>
+    <color name="purpleRegular">#A85C8F</color>
+    <color name="purpleLighter">#B87DA4</color>
+    <color name="purpleLightest">#C89EBC</color>
+
+    <!-- Browns -->
+    <color name="brownDark">#928166</color>
+    <color name="brownRegular">#A6895C</color>
+    <color name="brownLighter">#B69E79 </color>
+    <color name="brownLightest">#B69E79</color>
+
+    <!-- Greens -->
+    <color name="greenDark">#809A6D</color>
+    <color name="greenRegular">#76A75C</color>
+    <color name="greenLighter">#96B87C</color>
+    <color name="greenLightest">#B2C99D</color>
 </resources>
