@@ -175,6 +175,11 @@ public class FacebookUploadActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //if not logged in then end activity
+        if (AccessToken.getCurrentAccessToken() == null) {
+            finish();
+        }
+
         //grab publish permissions.
         callbackManager = CallbackManager.Factory.create();
         getPublishPermissions();

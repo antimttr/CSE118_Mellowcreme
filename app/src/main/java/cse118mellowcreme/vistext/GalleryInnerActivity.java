@@ -16,6 +16,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -34,6 +36,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
@@ -80,10 +84,44 @@ public class GalleryInnerActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
         //add the picture or something to a list to show in the gallery
+        return sort(galleryPictures);
+    }
+
+    private List<File> sort(List<File> galleryPictures) {
+        //sort list based on sortBy parameter
+        if(sortBy.equals(getResources().getString(R.string.sortby_nameup)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Ascending order
+                    return obj1.getName().compareToIgnoreCase(obj2.getName()); // To compare string values
+                }
+            });
+        else if(sortBy.equals(getResources().getString(R.string.sortby_namedown)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Descending order
+                    return obj2.getName().compareToIgnoreCase(obj1.getName()); // To compare string values
+                }
+            });
+        else if(sortBy.equals(getResources().getString(R.string.sortby_dateup)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Ascending order
+                    return Long.valueOf(obj1.lastModified()).compareTo(obj2.lastModified()); // To compare integer values
+
+                }
+            });
+        else if(sortBy.equals(getResources().getString(R.string.sortby_datedown)))
+            Collections.sort(galleryPictures, new Comparator<File>(){
+                public int compare(File obj1, File obj2) {
+                    // ## Descending order
+                    return Long.valueOf(obj2.lastModified()).compareTo(obj1.lastModified());
+                }
+            });
         return galleryPictures;
     }
+
 
     /**
      * Navigate through all the pictures in the directory and find the ones with the correct tags
@@ -113,7 +151,7 @@ public class GalleryInnerActivity extends AppCompatActivity {
         }
 
         //add the picture or something to a list to show in the gallery
-        return galleryPictures;
+        return sort(galleryPictures);
     }
 
     public boolean hasTag(String tagStr, JSONArray labels) {
@@ -137,6 +175,7 @@ public class GalleryInnerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_inner);
 
+        sortBy = "nameUp";
         categoryMap = new CategoryMaps();
         categoryMap.buildCategories();
 
@@ -299,6 +338,7 @@ public class GalleryInnerActivity extends AppCompatActivity {
                     facebookPost.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            dialog.dismiss();
                             try {
                                 if (AccessToken.getCurrentAccessToken() == null) {
                                     Intent loginIntent = new Intent(GalleryInnerActivity.this,
@@ -316,13 +356,68 @@ public class GalleryInnerActivity extends AppCompatActivity {
                         }
                     });
 
-                    //deletes the item from the file system if pressed
-                    ImageButton deleteItem = (ImageButton) dialog.findViewById(R.id.imageButton5);
-                    deleteItem.setOnClickListener(new View.OnClickListener() {
+                    //prompts the user to rename a file if pressed
+                    ImageButton renameItem = (ImageButton) dialog.findViewById(R.id.imageButton6);
+                    renameItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            try {
+                            dialog.dismiss();
+                            final EditText taskEditText = new EditText(view.getContext());
+                            String path = pictures.get(pos).getName();
+                            path = path.substring(0, path.lastIndexOf("."));
+                            taskEditText.setSelectAllOnFocus(true);
+                            taskEditText.setText(path);
 
+                            final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                            try {
+                                AlertDialog.Builder prompt = new AlertDialog.Builder(view.getContext());
+                                prompt.setMessage(R.string.rename_file);
+                                prompt.setView(taskEditText);
+                                prompt.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        imm.hideSoftInputFromInputMethod(getCurrentFocus().getRootView().getWindowToken(), 0);
+                                        try {
+                                            Log.i("confirmAddTagsButton", "Clicked");
+                                            Editable input = taskEditText.getText();
+                                            if(input.toString() != "") {
+                                                Log.i("rename_file", "File rename started");
+                                                File jpgFile = new File(pictures.get(pos).getAbsolutePath());
+                                                if (jpgFile.exists()) {
+                                                    File renamedFile = new File(jpgFile.getAbsolutePath().substring(0,
+                                                            jpgFile.getAbsolutePath().lastIndexOf("/"))
+                                                            + "/" + input.toString().trim() + ".jpg");
+                                                    boolean result = jpgFile.renameTo(renamedFile);
+                                                    if(result) {
+                                                        Log.i("rename_file", "File Renamed");
+                                                        Toast.makeText(GalleryInnerActivity.this,
+                                                                "renamed to: " + renamedFile.getName(),
+                                                                Toast.LENGTH_SHORT).show();
+                                                        refreshGallery();
+                                                    } else {
+                                                        Log.e("rename_file", "File Rename failed");
+                                                        Toast.makeText(GalleryInnerActivity.this,
+                                                                "rename failed",
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+
+                                            }
+                                            } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                prompt.setNegativeButton(android.R.string.cancel,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            imm.hideSoftInputFromInputMethod(getCurrentFocus().getRootView().getWindowToken(), 0);
+                                        }
+                                    })
+                                        .create();
+                                prompt.show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -330,7 +425,7 @@ public class GalleryInnerActivity extends AppCompatActivity {
                     });
 
                     //deletes the item from the file system if pressed
-                    ImageButton renameItem = (ImageButton) dialog.findViewById(R.id.imageButton6);
+                    ImageButton deleteItem = (ImageButton) dialog.findViewById(R.id.imageButton5);
                     deleteItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -350,12 +445,14 @@ public class GalleryInnerActivity extends AppCompatActivity {
                                         if(toBeDeleted.exists()) {
                                             boolean deleted = toBeDeleted.delete();
                                             if(deleted) {
+                                                Log.i("delete_file", "File Deleted");
                                                 Toast.makeText(GalleryInnerActivity.this,
                                                  "deleted " + pictures.get(pos).getAbsolutePath(),
                                                      Toast.LENGTH_SHORT).show();
                                                 refreshGallery();
                                             }
                                             else
+                                                Log.i("delete_file", "File Delete faile");
                                                 Toast.makeText(GalleryInnerActivity.this,
                                                         "deletion failed " + pictures.get(pos).getAbsolutePath(),
                                                         Toast.LENGTH_SHORT).show();
@@ -393,7 +490,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
         buttonNameUp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 System.out.println("Sort by NameUp clicked");
-                sortBy = "NameUp";
+                sortBy = getResources().getString(R.string.sortby_nameup);
+                dialog.dismiss();
+                refreshGallery();
             }
         });
 
@@ -401,7 +500,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
         buttonNameDown.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 System.out.println("Sort by NameDown clicked");
-                sortBy = "NameDown";
+                sortBy = getResources().getString(R.string.sortby_namedown);
+                dialog.dismiss();
+                refreshGallery();
             }
         });
 
@@ -409,7 +510,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
         buttonDateUp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 System.out.println("Sort by DateUp clicked");
-                sortBy = "DateUp";
+                sortBy = getResources().getString(R.string.sortby_dateup);
+                dialog.dismiss();
+                refreshGallery();
             }
         });
 
@@ -417,7 +520,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
         buttonDateDown.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 System.out.println("Sort by DateDown licked");
-                sortBy = "DateDown";
+                sortBy = getResources().getString(R.string.sortby_datedown);
+                dialog.dismiss();
+                refreshGallery();
             }
         });
 

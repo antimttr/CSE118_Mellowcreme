@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -128,7 +129,30 @@ public class ViewActivity extends AppCompatActivity
             public void onClick(View view) {
                 try {
                     Log.i("fb_logout", "facebook logout called.");
-                    LoginManager.getInstance().logOut();
+                        AlertDialog.Builder prompt;
+                        prompt =   new AlertDialog.Builder(view.getContext());
+
+
+                        prompt.setTitle(Html.fromHtml("<font color='#FF7F27'>Are you sure you want to log out of Facebook?</font>"));
+                        prompt.setCancelable(true);
+                        prompt.setPositiveButton(android.R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        LoginManager.getInstance().logOut();
+                                        Toast.makeText(ViewActivity.this,
+                                                "Facebook logout successful.",
+                                                Toast.LENGTH_SHORT).show();
+
+                                    }});
+
+                        prompt.setNegativeButton(android.R.string.cancel,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }});
+                        prompt.create();
+                        prompt.show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -263,8 +287,6 @@ public class ViewActivity extends AppCompatActivity
                         dialogCancel.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
-
                                 dialog.dismiss();
                             }
                         });
@@ -352,8 +374,12 @@ public class ViewActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        File jpgFile = new File(currentFile);
 
-
+        //end this activity if the file was deleted or renamed.
+        if(!jpgFile.exists()) {
+            finish();
+        }
     }
 
     @Override
