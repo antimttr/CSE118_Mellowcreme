@@ -141,7 +141,7 @@ public class VisTextContexts {
 
             tagList = new Vector<>();
             for(Pair<String, Double> prediction : rawPredictions) {
-                if(prediction.second > 0.5f) {
+                if(prediction.second > 0.7f) {
                     VisTextApp app = (VisTextApp)currentActivity.getApplication();
                     String result = app.getTagMaps().getTag(prediction.first);
 
