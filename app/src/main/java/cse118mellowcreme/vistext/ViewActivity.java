@@ -107,22 +107,16 @@ public class ViewActivity extends AppCompatActivity
             public void onClick(View view) {
                 try {
                     Log.i("fb_login", "login acitivity called.");
-                    if (AccessToken.getCurrentAccessToken() == null) {
-                        Intent loginIntent = new Intent(ViewActivity.this, FacebookLoginActivity.class);
-                        startActivity(loginIntent);
-                    } else {
-                        Intent uploadIntent = new Intent(ViewActivity.this, FacebookUploadActivity.class);
-                        uploadIntent.putExtra("file", currentFile);
-                        startActivity(uploadIntent);
-
-                    }
+                    Intent uploadIntent = new Intent(ViewActivity.this, FacebookUploadActivity.class);
+                    uploadIntent.putExtra("file", currentFile);
+                    startActivity(uploadIntent);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
 
-        //starts facebook image upload process if pressed
+        /*/starts facebook image upload process if pressed
         ImageButton facebookLogout = (ImageButton) headerLayout.findViewById(R.id.logoutFB);
         facebookLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,7 +152,7 @@ public class ViewActivity extends AppCompatActivity
                 }
             }
         });
-
+        */
 
 
 

@@ -136,6 +136,12 @@ public class FacebookUploadActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
    public void getPublishPermissions() {
         Collection<String> publishPermissions = new ArrayList<>();
         publishPermissions.add("publish_actions");
@@ -150,35 +156,42 @@ public class FacebookUploadActivity extends AppCompatActivity {
                         // User succesfully login with all permissions
                         // After this with these json and ParseUser , you can save your user to Parse
 
+                        Log.i("fb_upload","FB login success.");
                     }
                 });
                 Bundle parameters = new Bundle();
                 parameters.putString("fields", "id,first_name,last_name,name,email,gender,birthday");
                 request.setParameters(parameters);
                 request.executeAsync();
+                Log.i("fb_upload","FB login success.");
             }
 
             @Override
             public void onCancel() {
-
+                Log.i("fb_upload","FB login canceled.");
+                finish();
             }
 
             @Override
             public void onError(FacebookException facebookException) {
-
+                Log.i("fb_upload","FB login error." + facebookException.toString());
+                finish();
             }
         });
         LoginManager.getInstance().logInWithPublishPermissions(FacebookUploadActivity.this, publishPermissions);
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        //if not logged in then end activity
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //if not logged in then end activity
-        if (AccessToken.getCurrentAccessToken() == null) {
-            finish();
-        }
 
         //grab publish permissions.
         callbackManager = CallbackManager.Factory.create();
