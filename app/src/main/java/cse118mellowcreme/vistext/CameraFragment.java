@@ -87,6 +87,9 @@ import java.util.Vector;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 public class CameraFragment extends Fragment
         implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -96,6 +99,9 @@ public class CameraFragment extends Fragment
     private Timer esDataTimer;
     private TimerTask  esDataTimerTask;
     private Handler esDataTimerHandler = new Handler();
+
+    // For the bottom left view
+    private File jpgFile = null;
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -969,6 +975,36 @@ public class CameraFragment extends Fragment
                     showToast("Saved: " + mFile);
                     //Log.d(TAG, mFile.toString());
                     unlockFocus();
+
+                    // rotate bitmap
+                    try {
+                        ExifInterface exif = new ExifInterface(mFile.getAbsolutePath());
+                        int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
+
+                        Bitmap bmp = BitmapFactory.decodeFile(mFile.getAbsolutePath());
+
+                        Matrix matrix = new Matrix();
+                        matrix.postRotate(exifToDegrees(getOrientation(rotation)));
+                        Bitmap rotatedBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+
+                        saveBitmap(rotatedBitmap, mFile.getAbsolutePath());
+                        exif.saveAttributes();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    // set rotation to none
+                    try {
+                        ExifInterface exif = new ExifInterface(mFile.getAbsolutePath());
+
+                        exif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_NORMAL));
+                        exif.saveAttributes();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     try {
                         ExifInterface exif = new ExifInterface(mFile.getAbsolutePath());
                         VisTextApp app = (VisTextApp)getActivity().getApplication();
@@ -984,7 +1020,8 @@ public class CameraFragment extends Fragment
                     uiHandler.post(new Runnable(){
                         @Override
                         public void run() {
-                            refreshImageButton();
+                            updateImageButton(mFile);
+                            //refreshImageButton();
                         }
                     });
 
@@ -1240,13 +1277,49 @@ public class CameraFragment extends Fragment
                     .create();
         }
     }
-    private void refreshImageButton() {
-        String latestFile = getLatestImage();
 
-        File jpgFile = new File(latestFile);
+    private void updateImageButton(File f) {
+        jpgFile = f;
+        refreshImageButton();
+    }
+
+    private void refreshImageButton() {
+        if (jpgFile == null || !jpgFile.exists()) {
+            String latestFile = getLatestImage();
+            jpgFile = new File(latestFile);
+        }
+
         if(jpgFile.exists()) {
             ImageView imageView = (ImageView) getActivity().findViewById(R.id.lastPictureTaken);
             Picasso.with(getActivity()).load(jpgFile).fit().centerCrop().into(imageView);
         }
+    }
+
+    private void saveBitmap(Bitmap bitmap, String fileName) {
+        File file = new File(Environment.getExternalStorageDirectory(), fileName);
+        FileOutputStream fileOS = null;
+        try {
+            fileOS = new FileOutputStream(file);
+            // quality: Hint to the compressor, 0-100. 0 meaning compress for small size, 100 meaning compress for max quality.
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOS);
+            fileOS.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fileOS != null) {
+                try {
+                    fileOS.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static int exifToDegrees(int exifOrientation) {
+        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) { return 90; }
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {  return 180; }
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {  return 270; }
+        return 0;
     }
 }
