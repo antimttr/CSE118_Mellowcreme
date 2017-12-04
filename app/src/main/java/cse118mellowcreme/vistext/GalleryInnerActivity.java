@@ -223,8 +223,9 @@ public class GalleryInnerActivity extends AppCompatActivity {
                    list.setAdapter(adapter);
                    adapter.filter(newText);
 
-                   // Reset the gallery to have everything inside it
-                   category = "All";
+                   // Reset the gallery to have all the pictures belonging to the category
+                   Intent intent = getIntent();
+                   category = intent.getStringExtra("CategoryChosen");
                    refreshGallery();
                } else {
 
