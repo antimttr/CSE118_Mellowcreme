@@ -1,6 +1,34 @@
 <resources>
+    <string name="app_id">1969718673301849</string>
     <string name="app_name">VisText</string>
+    <string name="picture">Picture</string>
+    <string name="gallery">Gallery</string>
+    <string name="description_info">Info</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="add_tag">Please enter the label of the tag you want to add.</string>
+    <string name="rename_file">Rename file:</string>
+    <string name="request_permission2">This sample needs read external storage permission.</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_gallery">GalleryActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="title_activity_facebook_upload">FacebookUploadActivity</string>
+
+    <string name="delete_confirm">Are you sure you want to delete this file?</string>
+    <string name="logout_confirm">Are you sure you want to log out of Facebook?</string>
+
+    <string name="sortby_nameup">NameUp</string>
+    <string name="sortby_namedown">NameDown</string>
+    <string name="sortby_dateup">DateUp</string>
+    <string name="sortby_datedown">DateDown</string>
+
+
 </resources>

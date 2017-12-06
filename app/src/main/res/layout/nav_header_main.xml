@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/side_nav_bar"
+    android:id="@+id/side_nav_bar_header"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        app:srcCompat="@mipmap/ic_launcher_round" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@android:color/transparent">
+
+        <ImageButton
+            android:id="@+id/startFB"
+            android:layout_width="48dp"
+            android:background="@null"
+            android:layout_height="49dp"
+            android:layout_margin="10dp"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="1"
+            android:padding="0dp"
+            android:scaleType="fitStart"
+            app:srcCompat="@drawable/com_facebook_button_icon_blue" />
+
+        <ImageButton
+            android:id="@+id/logoutFB"
+            android:background="@null"
+            android:layout_width="48dp"
+            android:layout_height="49dp"
+            android:layout_margin="10dp"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/com_facebook_close" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:text="VisText Image Tags"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Team Mellowcreme CSE118" />
+
+    <me.kaede.tagview.TagView
+        android:id="@+id/tagview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:lineMargin="5dp"
+        app:tagMargin="3dp"
+        app:textPaddingBottom="3dp"
+        app:textPaddingLeft="10dp"
+        app:textPaddingRight="10dp"
+        app:textPaddingTop="3dp">
+    </me.kaede.tagview.TagView>
+
+    <Button
+        android:id="@+id/addTags"
+        style="@style/Widget.AppCompat.Button.Small"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:text="+" />
+
+</LinearLayout>
