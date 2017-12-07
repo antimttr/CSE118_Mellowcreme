@@ -340,16 +340,11 @@ public class GalleryInnerActivity extends AppCompatActivity {
                         public void onClick(View view) {
                             dialog.dismiss();
                             try {
-                                if (AccessToken.getCurrentAccessToken() == null) {
-                                    Intent loginIntent = new Intent(GalleryInnerActivity.this,
-                                            FacebookLoginActivity.class);
-                                    startActivity(loginIntent);
-                                } else {
-                                    Intent uploadIntent = new Intent(GalleryInnerActivity.this,
-                                            FacebookUploadActivity.class);
-                                    uploadIntent.putExtra("file", pictures.get(pos).getAbsolutePath());
-                                    startActivity(uploadIntent);
-                                }
+                                Log.i("fb_login", "login acitivity called.");
+                                Intent uploadIntent = new Intent(GalleryInnerActivity.this, FacebookUploadActivity.class);
+                                uploadIntent.putExtra("file", pictures.get(pos).getAbsolutePath());
+                                startActivity(uploadIntent);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
