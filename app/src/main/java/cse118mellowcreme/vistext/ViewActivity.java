@@ -368,6 +368,8 @@ public class ViewActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        currentFile = getIntent().getStringExtra("file");
         File jpgFile = new File(currentFile);
 
         //end this activity if the file was deleted or renamed.
@@ -379,7 +381,14 @@ public class ViewActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
+        getIntent().putExtra("file", currentFile);
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        getIntent().putExtra("file", currentFile);
     }
 
     /**
