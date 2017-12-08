@@ -30,5 +30,6 @@
     <string name="sortby_dateup">DateUp</string>
     <string name="sortby_datedown">DateDown</string>
 
+    <string name="clarifai_api">ac03b9b00ed8434ca1658de149f9e05e</string>
 
 </resources>

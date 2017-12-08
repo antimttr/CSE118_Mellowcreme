@@ -1,16 +1,24 @@
 package cse118mellowcreme.vistext;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.ExifInterface;
+import android.os.AsyncTask;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -42,9 +50,16 @@ import org.json.JSONArray;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
+import clarifai2.api.ClarifaiResponse;
+import clarifai2.dto.input.ClarifaiImage;
+import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.model.ConceptModel;
+import clarifai2.dto.model.output.ClarifaiOutput;
+import clarifai2.dto.prediction.Concept;
 import me.kaede.tagview.OnTagClickListener;
 import me.kaede.tagview.OnTagDeleteListener;
 import me.kaede.tagview.Tag;
@@ -53,6 +68,8 @@ import me.kaede.tagview.TagView;
 public class ViewActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
     private TagView tagView;
+
+    private ImageButton clarifaiButton;
 
     public String getCurrentFile() {
         return currentFile;
@@ -100,8 +117,32 @@ public class ViewActivity extends AppCompatActivity
         //tag view start
         View headerLayout = navigationView.getHeaderView(0);
 
+        // clarifai button
+        final Activity currentActivity = this;
+        clarifaiButton = headerLayout.findViewById(R.id.clarifaiButton);
+
+        clarifaiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("VIEW ACTIVITY", "CLICKED");
+                Intent intent = getIntent();
+                Bundle extras = intent.getExtras();
+                try {
+                    currentFile = extras.getString("file");
+                    Log.d("THIS IS THE FILE", currentFile);
+                    Intent serviceIntent = new Intent(currentActivity, ClarifaiService.class);
+                    serviceIntent.putExtra("image", currentFile);
+                    currentActivity.startService(serviceIntent);
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         //starts facebook image upload process if pressed
-        ImageButton uploadToFacebook = (ImageButton) headerLayout.findViewById(R.id.startFB);
+        ImageButton uploadToFacebook = headerLayout.findViewById(R.id.startFB);
         uploadToFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -374,11 +415,15 @@ public class ViewActivity extends AppCompatActivity
         if(!jpgFile.exists()) {
             finish();
         }
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(bReceiver, new IntentFilter("predictions"));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(bReceiver);
 
     }
 
@@ -446,6 +491,16 @@ public class ViewActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+    private BroadcastReceiver bReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String predictions = intent.getExtras().getString("predictions");
+            Log.d("Service Predictions", predictions);
+
+        }
+    };
 
     /**
      * Shows OK/Cancel confirmation dialog about camera permission.
