@@ -46,7 +46,8 @@
         app:layout_constraintStart_toEndOf="@+id/lastPictureTaken"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@android:drawable/ic_menu_camera" />
+        app:srcCompat="@mipmap/vt_pic"
+        android:background="@null"/>
 
     <ImageButton
         android:id="@+id/galleryButton"
@@ -58,7 +59,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@android:drawable/ic_menu_gallery" />
+        app:srcCompat="@mipmap/gal_pic"
+        android:background="@null"/>
 
     <ImageView
         android:id="@+id/lastPictureTaken"
