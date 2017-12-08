@@ -527,7 +527,6 @@ public class CameraFragment extends Fragment
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        Log.d("Rotate", "rotate");
         view.findViewById(R.id.takePicture).setOnClickListener(this);
         view.findViewById(R.id.galleryButton).setOnClickListener(this);
         view.findViewById(R.id.lastPictureTaken).setOnClickListener(this);
