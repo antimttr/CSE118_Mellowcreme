@@ -37,6 +37,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -188,6 +189,7 @@ public class ViewActivity extends AppCompatActivity
                 //Toast.makeText(ViewActivity.this, "click tag id = " + tag.id + " position = " + position, Toast.LENGTH_SHORT).show();
             }
         });
+
         tagView.setOnTagDeleteListener(new OnTagDeleteListener() {
 
             @Override
@@ -232,6 +234,8 @@ public class ViewActivity extends AppCompatActivity
                 ImageView imageView = (ImageView) findViewById(R.id.imageView);
                 Picasso.with(this).load(jpgFile).fit().centerInside().into(imageView);
             }
+            TextView filenameView = (TextView) headerLayout.findViewById(R.id.textView8);
+            filenameView.setText(jpgFile.getName());
 
             //add tag button inside drawer
             Button addTagsButton = (Button) headerLayout.findViewById(R.id.addTags);
