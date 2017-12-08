@@ -14,7 +14,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="40dp"
         android:text="Enter Tag"
-        android:buttonTint="@android:color/holo_orange_light"
+        android:buttonTint="@color/brownLighter"
+        android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,7 +26,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:text="Select Tag"
-        android:buttonTint="@android:color/holo_orange_light"
+        android:buttonTint="@color/brownLighter"
+        android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioButton" />
 
@@ -36,11 +38,12 @@
         android:layout_marginEnd="28dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="28dp"
-        android:popupBackground="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="@android:color/black"
         app:layout_constraintHorizontal_bias="0.722"
         app:layout_constraintStart_toEndOf="@+id/radioButton2"
-        app:layout_constraintTop_toBottomOf="@+id/editText3" />
+        app:layout_constraintTop_toBottomOf="@+id/editText3"
+ />
 
     <EditText
         android:id="@+id/editText3"
@@ -53,11 +56,12 @@
         android:inputType="textPersonName"
         android:text=""
         android:hint="Tag Label"
+        android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.588"
         app:layout_constraintStart_toEndOf="@+id/radioButton"
         app:layout_constraintTop_toTopOf="parent"
-        android:backgroundTint="@android:color/holo_orange_light" />
+        android:backgroundTint="@color/brownLighter" />
 
     <Button
         android:id="@+id/button9"
@@ -67,6 +71,8 @@
         android:layout_marginEnd="20dp"
         android:layout_marginTop="164dp"
         android:text="Accept"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/blueLighter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button10"
         app:layout_constraintTop_toTopOf="parent"
@@ -76,6 +82,8 @@
         android:id="@+id/button10"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
+        android:backgroundTint="@color/blueLighter"
+        android:textColor="@android:color/white"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="48dp"
         android:layout_marginTop="164dp"

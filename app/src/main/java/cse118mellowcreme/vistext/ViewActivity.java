@@ -1,5 +1,6 @@
 package cse118mellowcreme.vistext;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.ExifInterface;
 import android.os.PersistableBundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
@@ -23,8 +25,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -59,6 +64,20 @@ public class ViewActivity extends AppCompatActivity
     }
 
     private String currentFile;
+
+    public void showKeyboard() {
+
+            this.getWindow()
+                    .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+    }
+
+    public void hideKeyboard() {
+
+            this.getWindow()
+                    .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,9 +263,20 @@ public class ViewActivity extends AppCompatActivity
                         }
 
                         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                                view.getContext(), android.R.layout.simple_spinner_item, spinnerArray);
-
+                                view.getContext(), R.layout.spinner_text, spinnerArray);
+                        adapter.setDropDownViewResource(R.layout.spinner_dropdown);
                         tagSelect.setAdapter(adapter);
+
+                        textInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                            @Override
+                            public void onFocusChange(View v, boolean hasFocus) {
+                                if (!hasFocus) {
+                                    hideKeyboard();
+                                } else {
+                                    showKeyboard();
+                                }
+                            }
+                        });
 
                         radioTextInput.setChecked(true);
                         //select text input, and deselect tag select by menu
