@@ -14,6 +14,14 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Team Mellowcreme CSE118"
+        android:textStyle="bold"
+        />
 
     <ImageView
         android:id="@+id/imageView"
@@ -58,17 +66,17 @@
 
 
     <TextView
+        android:id="@+id/textView8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="File Name" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="VisText Image Tags"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Team Mellowcreme CSE118" />
 
     <me.kaede.tagview.TagView
         android:id="@+id/tagview"
