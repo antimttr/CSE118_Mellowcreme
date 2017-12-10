@@ -51,7 +51,7 @@
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/imageButton3"
         app:layout_constraintTop_toBottomOf="@+id/searchList"
-        android:background="@android:color/holo_orange_dark"/>
+        android:background="@color/brownLightest"/>
 
     <TextView
         android:id="@+id/textView2"
