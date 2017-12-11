@@ -27,6 +27,7 @@ public class ClarifaiService extends IntentService {
 
     @Override
     public void onCreate() {
+        super.onCreate();
         Log.d("CLARIFAI SERVICE", "On create");
         client = new ClarifaiBuilder(getResources().getString(R.string.clarifai_api))
                 .client(new OkHttpClient())
@@ -35,6 +36,9 @@ public class ClarifaiService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent workIntent) {
+        if (workIntent == null) {
+            Log.d("KIMBERLY!", "your work intent is null");
+        }
         // Gets data from the incoming Intent
         String fileName = workIntent.getExtras().getString("image");
         Log.d("CLARIFAI SERVICE", fileName);
@@ -47,7 +51,7 @@ public class ClarifaiService extends IntentService {
 
     private void sendBroadcast (ClarifaiResponse clarifaiResponse) {
         Intent intent = new Intent ("predictions"); //put the same message as in the filter you used in the activity when registering the receiver
-        intent.putExtra("predictions", clarifaiResponse.toString());
+        intent.putExtra("predictions", clarifaiResponse.rawBody());
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

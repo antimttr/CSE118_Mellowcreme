@@ -43,8 +43,11 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -71,6 +74,8 @@ public class ViewActivity extends AppCompatActivity
     }
 
     private String currentFile;
+
+    private ViewActivity currentActivity = this;
 
     public void showKeyboard() {
 
@@ -141,9 +146,8 @@ public class ViewActivity extends AppCompatActivity
                     Log.d("THIS IS THE FILE", currentFile);
                     Intent serviceIntent = new Intent(currentActivity, ClarifaiService.class);
                     serviceIntent.putExtra("image", currentFile);
+                    Log.d("BLEP", serviceIntent.getExtras().getString("image"));
                     currentActivity.startService(serviceIntent);
-
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -166,47 +170,7 @@ public class ViewActivity extends AppCompatActivity
             }
         });
 
-        /*/starts facebook image upload process if pressed
-        ImageButton facebookLogout = (ImageButton) headerLayout.findViewById(R.id.logoutFB);
-        facebookLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    Log.i("fb_logout", "facebook logout called.");
-                        AlertDialog.Builder prompt;
-                        prompt =   new AlertDialog.Builder(view.getContext());
-
-
-                        prompt.setTitle(Html.fromHtml("<font color='#FF7F27'>Are you sure you want to log out of Facebook?</font>"));
-                        prompt.setCancelable(true);
-                        prompt.setPositiveButton(android.R.string.ok,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        LoginManager.getInstance().logOut();
-                                        Toast.makeText(ViewActivity.this,
-                                                "Facebook logout successful.",
-                                                Toast.LENGTH_SHORT).show();
-
-                                    }});
-
-                        prompt.setNegativeButton(android.R.string.cancel,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                    }});
-                        prompt.create();
-                        prompt.show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        */
-
-
-
-        tagView = (TagView) headerLayout.findViewById(R.id.tagview);
+        tagView = headerLayout.findViewById(R.id.tagview);
         //SET LISTENER
         tagView.setOnTagClickListener(new OnTagClickListener() {
 
@@ -529,6 +493,34 @@ public class ViewActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             String predictions = intent.getExtras().getString("predictions");
             Log.d("Service Predictions", predictions);
+            try {
+                JSONObject predictionObject = new JSONObject(predictions);
+                JSONArray outputs = predictionObject.getJSONArray("outputs");
+                JSONObject data = outputs.getJSONObject(0).getJSONObject("data");
+                JSONArray concepts = data.getJSONArray("concepts");
+
+                ExifInterface exif = new ExifInterface(currentFile);
+                String currentTags = exif.getAttribute(ExifInterface.TAG_USER_COMMENT);
+                JSONArray tags = new JSONArray(currentTags);
+
+                for (int i = 0; i < concepts.length(); i++) {
+                    JSONObject prediction = concepts.getJSONObject(i);
+                    if (prediction.getDouble("value") > 0.7) {
+                        tags.put(prediction.get("name"));
+                    }
+                }
+
+                exif.setAttribute(ExifInterface.TAG_USER_COMMENT, tags.toString());
+                exif.saveAttributes();
+
+                currentActivity.refreshTags();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException ioException) {
+                Log.d("Exception", "Cannot open file");
+                ioException.printStackTrace();
+            }
 
         }
     };
