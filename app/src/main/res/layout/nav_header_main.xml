@@ -38,7 +38,16 @@
             app:srcCompat="@drawable/ic_launcher_new" />
     </LinearLayout>
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
     <ImageButton
+
             android:id="@+id/startFB"
             android:layout_width="48dp"
             android:background="@null"
@@ -49,6 +58,20 @@
             android:padding="0dp"
             android:scaleType="fitStart"
             app:srcCompat="@drawable/com_facebook_button_icon_blue" />
+
+        <ImageButton
+            android:id="@+id/clarifaiButton"
+            android:layout_width="48dp"
+            android:background="@null"
+            android:layout_height="49dp"
+            android:layout_margin="10dp"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="1"
+            android:padding="0dp"
+            android:scaleType="fitStart"
+            app:srcCompat="@drawable/clarifai_logo" />
+
+    </LinearLayout>
 
 
     <TextView

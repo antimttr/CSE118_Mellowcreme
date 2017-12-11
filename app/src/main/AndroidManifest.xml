@@ -59,6 +59,10 @@
             android:name=".FacebookUploadActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_facebook_upload"></activity>
+
+        <service
+            android:name=".ClarifaiService"
+            android:exported="false"/>
     </application>
 
 </manifest>
