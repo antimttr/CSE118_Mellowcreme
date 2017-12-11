@@ -15,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gridView2"
-        app:srcCompat="@drawable/ic_launcher" />
+        app:srcCompat="@mipmap/vt_pic"
+        android:background="@null" />
 
     <SearchView
         android:id="@+id/searchBar"
@@ -51,7 +52,7 @@
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/imageButton3"
         app:layout_constraintTop_toBottomOf="@+id/searchList"
-        android:background="@android:color/holo_orange_dark"/>
+        android:background="@color/brownLightest"/>
 
     <TextView
         android:id="@+id/textView2"
