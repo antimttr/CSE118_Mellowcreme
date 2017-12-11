@@ -50,8 +50,10 @@
         android:layout_marginTop="32dp"
         android:fontFamily="sans-serif-condensed"
         android:text="Facebook Upload"
+        android:padding="5dp"
         android:textSize="24sp"
         android:textStyle="bold"
+        android:background="@android:color/white"
         app:layout_constraintEnd_toStartOf="@+id/imageButton2_fb_upload"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,8 +80,10 @@
 
             <TextView
                 android:id="@+id/textView4"
+                android:padding="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@android:color/white"
                 android:text="Select tags for image caption" />
 
             <me.kaede.tagview.TagView

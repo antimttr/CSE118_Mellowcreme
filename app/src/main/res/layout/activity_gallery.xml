@@ -88,6 +88,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button6"
-        app:srcCompat="@drawable/ic_launcher" />
+        app:srcCompat="@mipmap/vt_pic"
+        android:background="@null" />
 
 </android.support.constraint.ConstraintLayout>
