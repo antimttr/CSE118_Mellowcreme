@@ -3,6 +3,7 @@ package cse118mellowcreme.vistext;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,7 +12,6 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.ExifInterface;
 import android.os.PersistableBundle;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
@@ -52,12 +52,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import clarifai2.api.ClarifaiResponse;
-import clarifai2.dto.input.ClarifaiImage;
-import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.model.ConceptModel;
-import clarifai2.dto.model.output.ClarifaiOutput;
-import clarifai2.dto.prediction.Concept;
 import me.kaede.tagview.OnTagClickListener;
 import me.kaede.tagview.OnTagDeleteListener;
 import me.kaede.tagview.Tag;
@@ -76,6 +70,8 @@ public class ViewActivity extends AppCompatActivity
     private String currentFile;
 
     private ViewActivity currentActivity = this;
+
+    private ProgressDialog nDialog;
 
     public void showKeyboard() {
 
@@ -138,15 +134,19 @@ public class ViewActivity extends AppCompatActivity
         clarifaiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("VIEW ACTIVITY", "CLICKED");
                 Intent intent = getIntent();
                 Bundle extras = intent.getExtras();
                 try {
                     currentFile = extras.getString("file");
-                    Log.d("THIS IS THE FILE", currentFile);
                     Intent serviceIntent = new Intent(currentActivity, ClarifaiService.class);
                     serviceIntent.putExtra("image", currentFile);
                     Log.d("BLEP", serviceIntent.getExtras().getString("image"));
+                    nDialog = new ProgressDialog(ViewActivity.this);
+                    nDialog.setMessage("Getting Clarifai predictions...");
+                    nDialog.setTitle("Clarifai");
+                    nDialog.setIndeterminate(false);
+                    nDialog.setCancelable(false);
+                    nDialog.show();
                     currentActivity.startService(serviceIntent);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -179,8 +179,6 @@ public class ViewActivity extends AppCompatActivity
                 Intent intent = new Intent(ViewActivity.this, GalleryInnerActivity.class);
                 intent.putExtra("TagSearch",  tag.text);
                 startActivity(intent);
-
-                //Toast.makeText(ViewActivity.this, "click tag id = " + tag.id + " position = " + position, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -505,14 +503,21 @@ public class ViewActivity extends AppCompatActivity
 
                 for (int i = 0; i < concepts.length(); i++) {
                     JSONObject prediction = concepts.getJSONObject(i);
-                    if (prediction.getDouble("value") > 0.7) {
-                        tags.put(prediction.get("name"));
+                    if (prediction.getDouble("value") > 0.8) {
+                        if (!currentTags.contains(prediction.get("name").toString())) {
+                            tags.put(prediction.get("name"));
+                        }
                     }
                 }
 
                 exif.setAttribute(ExifInterface.TAG_USER_COMMENT, tags.toString());
                 exif.saveAttributes();
 
+                Toast.makeText(ViewActivity.this,
+                        "Added Clarifai Tags!",
+                        Toast.LENGTH_SHORT).show();
+
+                nDialog.dismiss();
                 currentActivity.refreshTags();
 
             } catch (JSONException e) {

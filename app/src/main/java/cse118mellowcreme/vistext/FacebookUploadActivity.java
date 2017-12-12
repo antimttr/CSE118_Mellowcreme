@@ -359,12 +359,12 @@ public class FacebookUploadActivity extends AppCompatActivity {
 
                 if (tagSelected.get(i)) {
                     newTag.tagTextColor = Color.parseColor("#FFFFFF");
-                    newTag.layoutColor = Color.parseColor("#000000");
+                    newTag.layoutColor = Color.parseColor("#5D6B9A");
                     newTag.layoutColorPress = Color.parseColor("#FFFFFF");
                 } else {
                     newTag.tagTextColor = Color.parseColor("#000000");
                     newTag.layoutColor = Color.parseColor("#FFFFFF");
-                    newTag.layoutColorPress = Color.parseColor("#000000");
+                    newTag.layoutColorPress = Color.parseColor("#5D6B9A");
                 }
 
                 tagView.addTag(newTag);
