@@ -280,10 +280,15 @@ public class GalleryInnerActivity extends AppCompatActivity {
                 category = null;
                 tagLabel = query;
                 refreshGallery();
+                searchBar.clearFocus();
                return true;
            }
 
         });
+
+
+        //SearchView search = findViewById(R.id.searchBar);
+        //search.clearFocus();
 
     }
 
@@ -556,6 +561,10 @@ public class GalleryInnerActivity extends AppCompatActivity {
         }
     }
 
+    public void viewCamera(View view) {
+        Intent intent = new Intent(this, VisTextImagerActivity.class);
+        startActivity(intent);
+    }
 }
 
 

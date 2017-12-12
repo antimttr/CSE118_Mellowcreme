@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context="cse118mellowcreme.vistext.GalleryActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/blueRegular"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
@@ -81,14 +90,18 @@
 
     <ImageButton
         android:id="@+id/imageButton"
-        android:layout_width="97dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="28dp"
+        android:paddingTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:onClick="viewCamera"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button6"
         app:srcCompat="@mipmap/vt_pic"
-        android:background="@null" />
+        android:background="#00000000" />
 
 </android.support.constraint.ConstraintLayout>
