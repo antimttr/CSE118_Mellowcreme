@@ -196,16 +196,18 @@ public class ViewActivity extends AppCompatActivity
 
                         JSONArray json = new JSONArray(exif.getAttribute(ExifInterface.TAG_USER_COMMENT));
                         Vector<String> currentTags = new Vector<>();
+
                         for (int i = 0; i < json.length(); i++) {
                             String entry = (String) json.get(i);
                             if(!entry.toString().equals(tag.text))
                                     currentTags.add(entry.toString());
+                            //Log.e("delete_tag", "JSON legnth:  " + json.length() +  " / " + i + " entry: " + entry);
                         }
 
                         JSONArray jsonOut = new JSONArray(currentTags);
                         exif.setAttribute(ExifInterface.TAG_USER_COMMENT, jsonOut.toString());
                         exif.saveAttributes();
-
+                        Log.e("delete_tag", "Output String " + jsonOut.toString());
                         refreshTags();
                     }
                 } catch (Exception e) {
