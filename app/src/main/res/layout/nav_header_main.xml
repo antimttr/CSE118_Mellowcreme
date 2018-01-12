@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/side_nav_bar"
+    android:id="@+id/side_nav_bar_header"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:scaleType="fitStart"
+            app:srcCompat="@drawable/vistext" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="18dp"
+            android:layout_toEndOf="@+id/imageView"
+            android:layout_weight="1"
+            android:text="VisText"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageButton
+
+            android:id="@+id/startFB"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:padding="0dp"
+            android:scaleType="fitEnd"
+            app:srcCompat="@drawable/fblogo" />
+
+        <ImageButton
+            android:id="@+id/clarifaiButton"
+            android:layout_width="48dp"
+            android:background="@null"
+            android:layout_height="49dp"
+            android:layout_margin="10dp"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="1"
+            android:padding="0dp"
+            android:scaleType="fitStart"
+            app:srcCompat="@drawable/clarifai_logo" />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="File Name" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:text="VisText Image Tags"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+    <me.kaede.tagview.TagView
+        android:id="@+id/tagview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:lineMargin="5dp"
+        app:tagMargin="3dp"
+        app:textPaddingBottom="3dp"
+        app:textPaddingLeft="10dp"
+        app:textPaddingRight="10dp"
+        app:textPaddingTop="3dp">
+    </me.kaede.tagview.TagView>
+
+    <Button
+        android:id="@+id/addTags"
+        style="@style/Widget.AppCompat.Button.Small"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:text="+" />
+
+</LinearLayout>
