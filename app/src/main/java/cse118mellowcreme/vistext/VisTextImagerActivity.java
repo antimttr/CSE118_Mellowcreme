@@ -21,8 +21,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
+ * Main imaging activity that loads the camera2 fragment.
+ * Code by MWEST on 11/4/2017.
  */
 public class VisTextImagerActivity extends AppCompatActivity {
     /**
