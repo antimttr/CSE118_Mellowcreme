@@ -1,4 +1,4 @@
-![VisText Logo](/Github Logo.png)
+![VisText Logo](/Git Logo.png)
 # VisText
 Photography as a technology has become ubiquitous. We see it in everyday life without thinking about it. Turn on the news and there's bound to be pictures. Want to capture a moment? Take a photo. They say that a picture is worth a thousand words. Our team believes in this concept, but we want to take it to the next level. We introduce VisText, a social media application that provides context to images. We do this by taking advantage of the information provided by ExtraSensory to automatically provide context of the image being taken. 
 
